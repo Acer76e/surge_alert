@@ -14,7 +14,7 @@ def index(request):
 	altamonte = {'start_latitude':'28.663386','start_longitude':'-81.365284','end_latitude':'28.663388','end_longitude':'-81.365286'}
 	curryford = {'start_latitude':'28.515967','start_longitude':'-81.290118','end_latitude':'28.515969','end_longitude':'-81.290120'}
 	wintersprings = {'start_latitude':'28.689733','start_longitude':'-81.209137','end_latitude':'28.689735','end_longitude':'-81.209139'}
-
+        lakemarysanford = {'start_latitude':'28.756492','start_longitude':'-81.32196'}
 	cities = []
 	cities.append(downtowncore)
 	cities.append(outterdowntown)
@@ -24,8 +24,9 @@ def index(request):
 	cities.append(altamonte)
 	cities.append(curryford)
 	cities.append(wintersprings)
+        cities.append(lakemarysanford)
 	info = ''
-	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs"]
+	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary/Sanford"]
 
 	for i in cities:
 		payload = cities[cities.index(i)]
