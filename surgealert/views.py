@@ -15,6 +15,11 @@ def index(request):
 	curryford = {'start_latitude':'28.515967','start_longitude':'-81.290118','end_latitude':'28.515969','end_longitude':'-81.290120'}
 	wintersprings = {'start_latitude':'28.689733','start_longitude':'-81.209137','end_latitude':'28.689735','end_longitude':'-81.209139'}
         lakemarysanford = {'start_latitude':'28.756492','start_longitude':'-81.321960','end_latitude':'28.756494','end_longitude':'-81.321962'}
+        pinehills = {'start_latitude':'28.578140','start_longitude':'-81.434395','end_latitude':'28.578142','end_longitude':'-81.434397'}
+        metrowest ={'start_latitude':'28.538645','start_longitude':'-81.458087','end_latitude':'28.538647','end_longitude':'-81.458089'}
+        ocoee ={'start_latitude':'28.573772','start_longitude':'-81.518160','end_latitude':'28.573774','end_longitude':'-81.518162'}
+        holden = {'start_latitude':'28.494819','start_longitude':'-81.387818','end_latitude':'28.494821','end_longitude':'-81.387820'}
+        universal = {'start_latitude':'28.489459','start_longitude':'-81.430396','end_latitude':'28.489461','end_longitude':'-81.430398'}
 	cities = []
 	cities.append(downtowncore)
 	cities.append(outterdowntown)
@@ -25,8 +30,13 @@ def index(request):
 	cities.append(curryford)
 	cities.append(wintersprings)
         cities.append(lakemarysanford)
+        cities.append(pinehills)
+        cities.append(metrowest)
+        cities.append(ocoee)
+        cities.append(holden)
+        cities.append(universal)
 	info = ''
-	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary Sanford"]
+	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary Sanford","Pine Hills","MetroWest","Ocoee Winter Garden","Holden Belle Isle","Millenia Universal Studios"]
 
 	for i in cities:
 		payload = cities[cities.index(i)]
