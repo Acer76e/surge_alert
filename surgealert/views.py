@@ -26,7 +26,7 @@ def index(request):
 	cities.append(wintersprings)
         cities.append(lakemarysanford)
 	info = ''
-	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary/Sanford"]
+	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary Sanford"]
 
 	for i in cities:
 		payload = cities[cities.index(i)]
