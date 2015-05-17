@@ -14,7 +14,7 @@ def index(request):
 	altamonte = {'start_latitude':'28.663386','start_longitude':'-81.365284','end_latitude':'28.663388','end_longitude':'-81.365286'}
 	curryford = {'start_latitude':'28.515967','start_longitude':'-81.290118','end_latitude':'28.515969','end_longitude':'-81.290120'}
 	wintersprings = {'start_latitude':'28.689733','start_longitude':'-81.209137','end_latitude':'28.689735','end_longitude':'-81.209139'}
-        lakemarysanford = {'start_latitude':'28.756492','start_longitude':'-81.32196'}
+        lakemarysanford = {'start_latitude':'28.756492','start_longitude':'-81.321960','end_latitude':'28.756494','end_longitude':'-81.321962'}
 	cities = []
 	cities.append(downtowncore)
 	cities.append(outterdowntown)
