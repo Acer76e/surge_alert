@@ -1,11 +1,9 @@
 <h1>Page View Report</h1>
 
 <table>
-<ul>
 
 {% for greeting in greetings %}
-    <tr><li>{{ greeting.when }}</li></tr>
+    <tr>{{ greeting.when }}</tr>
 {% endfor %}
 
-</ul>
 </table>
