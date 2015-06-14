@@ -20,6 +20,8 @@ def index(request):
         ocoee ={'start_latitude':'28.573772','start_longitude':'-81.518160','end_latitude':'28.573774','end_longitude':'-81.518162'}
         holden = {'start_latitude':'28.494819','start_longitude':'-81.387818','end_latitude':'28.494821','end_longitude':'-81.387820'}
         universal = {'start_latitude':'28.489459','start_longitude':'-81.430396','end_latitude':'28.489461','end_longitude':'-81.430398'}
+        disney =
+{'start_latitude':'28.405047','start_longitude':'-81.577656','end_latitude':'28.405049','end_longitude':'-81.577658'}
 	cities = []
 	cities.append(downtowncore)
 	cities.append(outterdowntown)
@@ -35,8 +37,9 @@ def index(request):
         cities.append(ocoee)
         cities.append(holden)
         cities.append(universal)
+        cities.append(disney)
 	info = ''
-	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary Sanford","Pine Hills","MetroWest","Ocoee Winter Garden","Holden Belle Isle","Millenia Universal Studios"]
+	names = ["Orlando Downtown Core","Downtown Proper","Winter Park","Goldenrod Full Sail","UCF East Orlando","Altamonte Maitland","Curry Ford","Winter Springs","Lake Mary Sanford","Pine Hills","MetroWest","Ocoee Winter Garden","Holden Belle Isle","Millenia Universal Studios","Disney Bay Lake"]
 
 	for i in cities:
 		payload = cities[cities.index(i)]
