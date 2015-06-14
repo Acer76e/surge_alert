@@ -20,8 +20,7 @@ def index(request):
         ocoee ={'start_latitude':'28.573772','start_longitude':'-81.518160','end_latitude':'28.573774','end_longitude':'-81.518162'}
         holden = {'start_latitude':'28.494819','start_longitude':'-81.387818','end_latitude':'28.494821','end_longitude':'-81.387820'}
         universal = {'start_latitude':'28.489459','start_longitude':'-81.430396','end_latitude':'28.489461','end_longitude':'-81.430398'}
-        disney =
-{'start_latitude':'28.405047','start_longitude':'-81.577656','end_latitude':'28.405049','end_longitude':'-81.577658'}
+        disney = {'start_latitude':'28.405047','start_longitude':'-81.577656','end_latitude':'28.405049','end_longitude':'-81.577658'}
 	cities = []
 	cities.append(downtowncore)
 	cities.append(outterdowntown)
