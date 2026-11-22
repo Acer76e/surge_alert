@@ -20,25 +20,53 @@
     { key: 'diamond', name: 'Diamond' },
   ];
 
-  // Which months an Uber Pro period starts in. 0 = calendar quarters.
+  // Everything besides points that Uber Pro checks, in the Driver app's order.
+  var CRITERIA = [
+    { key: 'acceptance', label: 'Acceptance rate', short: 'Accept', unit: '%', dir: 'min', lo: 0, hi: 100 },
+    { key: 'cancellation', label: 'Cancellation rate', short: 'Cancel', unit: '%', dir: 'max', lo: 0, hi: 100 },
+    { key: 'rating', label: 'Star rating', short: 'Rating', unit: '', dir: 'min', lo: 1, hi: 5 },
+    { key: 'insights', label: 'Driving Insights score', short: 'Insights', unit: '', dir: 'min', lo: 0, hi: 100 },
+  ];
+
+  // Which months an Uber Pro period starts in. 1 matches the Driver app as
+  // of Nov 2026: Nov to Jan, Feb to Apr, May to Jul, Aug to Oct.
   var CYCLES = [
-    { value: 0, label: 'Jan, Apr, Jul, Oct' },
     { value: 1, label: 'Feb, May, Aug, Nov' },
+    { value: 0, label: 'Jan, Apr, Jul, Oct' },
     { value: 2, label: 'Mar, Jun, Sep, Dec' },
   ];
 
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Tier points are left empty on purpose: they differ by city and Uber
-  // changes them, so the driver copies them from the Driver app.
-  // Rating and cancellation limits are the ones Uber's help pages list.
+  // A trip that starts or ends in extra-point hours earns this many points; others earn 1.
+  var BONUS_POINTS = 3;
+
+  // Extra-point hours from the Driver app (Nov 2026), per weekday (0 = Sunday),
+  // as [startHour, endHour) with 24 meaning midnight.
+  var DEFAULT_BONUS_HOURS = {
+    0: [[0, 3], [9, 19], [21, 24]],
+    1: [[7, 10], [15, 18], [21, 24]],
+    2: [[7, 10], [15, 18], [21, 24]],
+    3: [[7, 10], [15, 18], [21, 24]],
+    4: [[7, 10], [15, 18], [21, 24]],
+    5: [[0, 3], [7, 19], [21, 24]],
+    6: [[0, 3], [9, 19], [21, 24]],
+  };
+
+  // Tier requirements as the Driver app listed them in Nov 2026. They vary by
+  // city and Uber changes them, so the settings form lets the driver edit all of it.
   var DEFAULT_SETTINGS = {
-    cycle: 0,
-    tiers: { gold: null, platinum: null, diamond: null },
+    cycle: 1,
     target: 'platinum',
+    currentStatus: null,
     daysPerWeek: 5,
     pointsPerTrip: 1,
-    reqs: { rating: 4.85, acceptance: null, cancellation: 4 },
+    tiers: {
+      gold: { points: 25, acceptance: 25, cancellation: 8, rating: 4.85, insights: 75 },
+      platinum: { points: 400, acceptance: 70, cancellation: 4, rating: 4.85, insights: 85 },
+      diamond: { points: 1000, acceptance: 70, cancellation: 4, rating: 4.85, insights: 85 },
+    },
   };
 
   /* ---------- dates ---------- */
@@ -119,31 +147,42 @@
 
   function clamp(n, lo, hi) { return Math.min(hi, Math.max(lo, n)); }
 
+  function isTierKey(k) { return TIERS.some(function (t) { return t.key === k; }); }
+
+  function normalizeTier(raw, legacyReqs, fallback) {
+    // Older saves kept points as a bare number and one shared set of rate limits.
+    if (typeof raw === 'number' || typeof raw === 'string') {
+      raw = { points: raw, acceptance: legacyReqs.acceptance, cancellation: legacyReqs.cancellation, rating: legacyReqs.rating, insights: null };
+    }
+    if (!raw || typeof raw !== 'object') raw = fallback;
+    var pts = num(raw.points);
+    var out = { points: pts !== null && pts > 0 ? Math.round(pts) : null };
+    CRITERIA.forEach(function (c) {
+      var v = num(raw[c.key]);
+      out[c.key] = v === null ? null : clamp(v, c.lo, c.hi);
+    });
+    return out;
+  }
+
   function normalizeSettings(raw) {
     raw = raw && typeof raw === 'object' ? raw : {};
     var d = DEFAULT_SETTINGS;
-    var tiersIn = raw.tiers && typeof raw.tiers === 'object' ? raw.tiers : {};
-    var reqsIn = raw.reqs && typeof raw.reqs === 'object' ? raw.reqs : d.reqs;
+    var tiersIn = raw.tiers && typeof raw.tiers === 'object' ? raw.tiers : d.tiers;
+    var legacyReqs = raw.reqs && typeof raw.reqs === 'object' ? raw.reqs : {};
     var tiers = {};
     TIERS.forEach(function (t) {
-      var v = num(tiersIn[t.key]);
-      tiers[t.key] = v !== null && v > 0 ? Math.round(v) : null;
+      tiers[t.key] = normalizeTier(tiersIn[t.key], legacyReqs, raw.tiers ? { points: null } : d.tiers[t.key]);
     });
     var cycle = num(raw.cycle);
     var dpw = num(raw.daysPerWeek);
     var ppt = num(raw.pointsPerTrip);
-    var target = TIERS.some(function (t) { return t.key === raw.target; }) ? raw.target : d.target;
-    function req(key, lo, hi) {
-      var v = num(reqsIn[key]);
-      return v === null ? null : clamp(v, lo, hi);
-    }
     return {
       cycle: cycle === null ? d.cycle : ((Math.trunc(cycle) % 3) + 3) % 3,
-      tiers: tiers,
-      target: target,
+      target: isTierKey(raw.target) ? raw.target : d.target,
+      currentStatus: isTierKey(raw.currentStatus) || raw.currentStatus === 'blue' ? raw.currentStatus : null,
       daysPerWeek: dpw === null ? d.daysPerWeek : clamp(Math.round(dpw), 1, 7),
-      pointsPerTrip: ppt === null || ppt <= 0 ? d.pointsPerTrip : Math.min(ppt, 50),
-      reqs: { rating: req('rating', 1, 5), acceptance: req('acceptance', 0, 100), cancellation: req('cancellation', 0, 100) },
+      pointsPerTrip: ppt === null || ppt <= 0 ? d.pointsPerTrip : Math.min(ppt, BONUS_POINTS),
+      tiers: tiers,
     };
   }
 
@@ -151,17 +190,17 @@
     if (!raw || typeof raw !== 'object' || !isISODate(raw.date)) return null;
     var points = num(raw.points);
     if (points === null || points < 0) return null;
-    function opt(key, lo, hi) {
-      var v = num(raw[key]);
-      return v === null || v < lo || v > hi ? null : v;
-    }
-    return {
+    var trips = num(raw.trips);
+    var out = {
       date: raw.date,
       points: Math.round(points),
-      rating: opt('rating', 1, 5),
-      acceptance: opt('acceptance', 0, 100),
-      cancellation: opt('cancellation', 0, 100),
+      trips: trips === null || trips < 0 ? null : Math.round(trips),
     };
+    CRITERIA.forEach(function (c) {
+      var v = num(raw[c.key]);
+      out[c.key] = v === null || v < c.lo || v > c.hi ? null : v;
+    });
+    return out;
   }
 
   function sortCheckins(list) {
@@ -191,32 +230,115 @@
     return 'Blue';
   }
 
-  // Highest tier whose points are met. 'blue' is the starting tier.
+  function tierRank(key) {
+    for (var i = 0; i < TIERS.length; i++) if (TIERS[i].key === key) return i + 1;
+    return 0;
+  }
+
+  // Highest tier whose points are met, looking at points alone. 'blue' is the starting tier.
   function tierFor(points, tiers) {
     for (var i = TIERS.length - 1; i >= 0; i--) {
-      var v = tiers[TIERS[i].key];
-      if (v !== null && v !== undefined && points >= v) return TIERS[i].key;
+      var v = tiers[TIERS[i].key].points;
+      if (v !== null && points >= v) return TIERS[i].key;
     }
     return 'blue';
   }
 
   // The next tier above `key` that has a points number set.
   function tierAbove(key, tiers) {
-    var i = 0;
-    while (i < TIERS.length && TIERS[i].key !== key) i++;
-    for (i = i + 1; i < TIERS.length; i++) {
-      if (tiers[TIERS[i].key] !== null && tiers[TIERS[i].key] !== undefined) return TIERS[i].key;
+    for (var i = tierRank(key); i < TIERS.length; i++) {
+      if (tiers[TIERS[i].key].points !== null) return TIERS[i].key;
     }
     return null;
+  }
+
+  // Does one stat meet one tier's limit? null when either side is unknown.
+  function meets(crit, value, req) {
+    if (value === null || value === undefined || req === null || req === undefined) return null;
+    return crit.dir === 'min' ? value >= req : value <= req;
+  }
+
+  /*
+   * Where the driver stands against every tier, like the table in the app.
+   * stats: { points, acceptance, cancellation, rating, insights } (null = not entered).
+   * A stat the driver hasn't entered doesn't block a tier; it is listed in `unknown`.
+   */
+  function standing(stats, tiers) {
+    var rows = {};
+    var best = 'blue';
+    TIERS.forEach(function (t) {
+      var req = tiers[t.key];
+      var cells = { points: req.points === null ? null : stats.points >= req.points };
+      var fails = [];
+      var unknown = [];
+      if (cells.points === false) fails.push('points');
+      CRITERIA.forEach(function (c) {
+        var ok = meets(c, stats[c.key], req[c.key]);
+        cells[c.key] = ok;
+        if (ok === false) fails.push(c.key);
+        if (ok === null && req[c.key] !== null) unknown.push(c.key);
+      });
+      var qualifies = req.points !== null && fails.length === 0;
+      rows[t.key] = { cells: cells, fails: fails, unknown: unknown, qualifies: qualifies };
+      if (qualifies) best = t.key;
+    });
+    return { tier: best, rows: rows };
+  }
+
+  /* ---------- extra-point hours ---------- */
+
+  function windowsFor(hours, day) {
+    var list = hours && Array.isArray(hours[day]) ? hours[day] : [];
+    return list.filter(function (w) { return Array.isArray(w) && w.length === 2 && w[0] < w[1]; })
+      .slice().sort(function (a, b) { return a[0] - b[0]; });
+  }
+
+  /*
+   * Is `minute` (minutes after midnight) on weekday `day` inside an
+   * extra-point window? Windows that run into the next day are joined.
+   * Returns { active, endDay, endHour } while active, or
+   * { active: false, nextDay, nextHour, nextEndHour } with day offsets from `day`.
+   */
+  function bonusNow(day, minute, hours) {
+    hours = hours || DEFAULT_BONUS_HOURS;
+    var h = minute / 60;
+    var today = windowsFor(hours, day);
+    for (var i = 0; i < today.length; i++) {
+      var w = today[i];
+      if (h >= w[0] && h < w[1]) {
+        var offset = 0, end = w[1];
+        // Follow a window that ends at midnight into one that starts at midnight.
+        while (end === 24 && offset < 7) {
+          var next = windowsFor(hours, (day + offset + 1) % 7)[0];
+          if (!next || next[0] !== 0) break;
+          offset++;
+          end = next[1];
+        }
+        return { active: true, endDay: offset, endHour: end % 24 === 0 && end === 24 ? 0 : end, endsAtMidnight: end === 24 };
+      }
+    }
+    for (var o = 0; o < 8; o++) {
+      var list = windowsFor(hours, (day + o) % 7);
+      for (var j = 0; j < list.length; j++) {
+        if (o > 0 || list[j][0] > h) return { active: false, nextDay: o, nextHour: list[j][0], nextEndHour: list[j][1] };
+      }
+    }
+    return { active: false, nextDay: null };
+  }
+
+  function weeklyBonusHours(hours) {
+    var total = 0;
+    for (var d = 0; d < 7; d++) windowsFor(hours, d).forEach(function (w) { total += w[1] - w[0]; });
+    return total;
   }
 
   /* ---------- the plan ---------- */
 
   // What it takes to get from `points` to `goal` in the days left.
-  function requirement(points, goal, daysLeft, settings) {
+  function requirement(points, goal, daysLeft, daysPerWeek, pointsPerTrip) {
     var needed = Math.max(0, goal - points);
-    var drivingDaysLeft = Math.max(1, Math.round(daysLeft * settings.daysPerWeek / 7));
-    var tripsTotal = Math.ceil(needed / settings.pointsPerTrip - 1e-9);
+    var drivingDaysLeft = Math.max(1, Math.round(daysLeft * daysPerWeek / 7));
+    var tripsTotal = Math.ceil(needed / pointsPerTrip - 1e-9);
     // needed * 7 / days avoids the float error of dividing by days / 7
     var weekDivisor = Math.max(7, daysLeft);
     return {
@@ -226,27 +348,43 @@
       perDrivingDay: Math.ceil(needed / drivingDaysLeft),
       tripsTotal: tripsTotal,
       tripsPerDrivingDay: Math.ceil(tripsTotal / drivingDaysLeft),
+      tripsAllBonus: Math.ceil(needed / BONUS_POINTS - 1e-9),
+      tripsAllRegular: needed,
       perWeek: Math.ceil(needed * 7 / weekDivisor),
       tripsPerWeek: Math.ceil(tripsTotal * 7 / weekDivisor),
       perCalendarDay: needed / Math.max(1, daysLeft),
     };
   }
 
-  function quality(checkins, reqs) {
-    function lastValue(key) {
-      for (var i = checkins.length - 1; i >= 0; i--) if (checkins[i][key] !== null) return checkins[i][key];
-      return null;
-    }
-    return [
-      { key: 'rating', label: 'Star rating', unit: '', dir: 'min' },
-      { key: 'acceptance', label: 'Acceptance rate', unit: '%', dir: 'min' },
-      { key: 'cancellation', label: 'Cancellation rate', unit: '%', dir: 'max' },
-    ].map(function (q) {
-      q.value = lastValue(q.key);
-      q.req = reqs[q.key];
-      q.ok = q.value === null || q.req === null ? null : q.dir === 'min' ? q.value >= q.req : q.value <= q.req;
-      return q;
+  function latestStats(checkins) {
+    var stats = { points: checkins.length ? checkins[checkins.length - 1].points : 0 };
+    CRITERIA.forEach(function (c) {
+      stats[c.key] = null;
+      for (var i = checkins.length - 1; i >= 0; i--) {
+        if (checkins[i][c.key] !== null) { stats[c.key] = checkins[i][c.key]; break; }
+      }
     });
+    return stats;
+  }
+
+  // Average points per trip: from the latest check-in that has a trip count, else the setting.
+  function tripMix(checkins, settings) {
+    for (var i = checkins.length - 1; i >= 0; i--) {
+      var c = checkins[i];
+      if (c.trips && c.points > 0) {
+        var avg = clamp(c.points / c.trips, 1, BONUS_POINTS);
+        return {
+          source: 'trips',
+          avg: avg,
+          trips: c.trips,
+          points: c.points,
+          date: c.date,
+          // trips = regular + bonus and points = regular + 3 * bonus
+          bonusTrips: clamp(Math.round((c.points - c.trips) / (BONUS_POINTS - 1)), 0, c.trips),
+        };
+      }
+    }
+    return { source: 'setting', avg: settings.pointsPerTrip };
   }
 
   /*
@@ -271,8 +409,10 @@
       return c.date >= period.start && c.date <= today;
     });
     var latest = list.length ? list[list.length - 1] : null;
-    var points = latest ? latest.points : 0;
-    var targetPoints = s.tiers[s.target];
+    var stats = latestStats(list);
+    var points = stats.points;
+    var targetPoints = s.tiers[s.target].points;
+    var mix = tripMix(list, s);
 
     var out = {
       today: today,
@@ -283,20 +423,24 @@
       daysLeft: tEnd - tNow + 1,
       checkins: list,
       latest: latest,
+      stats: stats,
       points: points,
+      mix: mix,
       tierNow: tierFor(points, s.tiers),
       target: s.target,
       targetName: tierName(s.target),
       targetPoints: targetPoints,
-      quality: quality(list, s.reqs),
+      keeping: s.currentStatus === s.target,
+      standing: standing(stats, s.tiers),
     };
+    out.blockers = out.standing.rows[s.target].fails;
 
     if (targetPoints === null) {
       out.status = 'setup';
       return out;
     }
 
-    var req = requirement(points, targetPoints, out.daysLeft, s);
+    var req = requirement(points, targetPoints, out.daysLeft, s.daysPerWeek, mix.avg);
     for (var k in req) out[k] = req[k];
     out.reached = points >= targetPoints;
 
@@ -313,6 +457,10 @@
     out.pacePerDay = pace;
     out.projected = Math.round(points + pace * daysAfterLatest);
     out.projectedTier = tierFor(out.projected, s.tiers);
+    var projStats = {};
+    for (var key in stats) projStats[key] = stats[key];
+    projStats.points = out.projected;
+    out.projectedStanding = standing(projStats, s.tiers).tier;
     out.evenPace = targetPoints * elapsedAtLatest / period.totalDays;
     out.vsEven = Math.round(points - out.evenPace);
     out.early = elapsedAtLatest < 7;
@@ -333,8 +481,8 @@
     if (out.reached) {
       out.status = 'reached';
       var next = tierAbove(s.target, s.tiers);
-      if (next && points < s.tiers[next]) {
-        out.stretch = requirement(points, s.tiers[next], out.daysLeft, s);
+      if (next && points < s.tiers[next].points) {
+        out.stretch = requirement(points, s.tiers[next].points, out.daysLeft, s.daysPerWeek, mix.avg);
         out.stretch.tier = next;
         out.stretch.tierName = tierName(next);
       }
@@ -365,24 +513,28 @@
     return Object.keys(groups).sort().reverse().map(function (start) {
       var g = groups[start];
       var m = meta && meta[start] ? normalizeSettings(meta[start]) : fb;
-      var finalPoints = g.list[g.list.length - 1].points;
-      var goal = m.tiers[m.target];
+      var finalStats = latestStats(g.list);
+      var goal = m.tiers[m.target].points;
       return {
         period: g.period,
-        finalPoints: finalPoints,
+        finalPoints: finalStats.points,
         checkins: g.list.length,
-        tier: tierFor(finalPoints, m.tiers),
+        tier: standing(finalStats, m.tiers).tier,
         target: m.target,
         targetName: tierName(m.target),
-        hitTarget: goal === null ? null : finalPoints >= goal,
+        hitTarget: goal === null ? null : finalStats.points >= goal,
       };
     });
   }
 
   return {
     TIERS: TIERS,
+    CRITERIA: CRITERIA,
     CYCLES: CYCLES,
     MONTHS: MONTHS,
+    DAYS: DAYS,
+    BONUS_POINTS: BONUS_POINTS,
+    DEFAULT_BONUS_HOURS: DEFAULT_BONUS_HOURS,
     DEFAULT_SETTINGS: DEFAULT_SETTINGS,
     toISO: toISO,
     parseISO: parseISO,
@@ -398,8 +550,12 @@
     upsertCheckin: upsertCheckin,
     removeCheckin: removeCheckin,
     tierName: tierName,
+    tierRank: tierRank,
     tierFor: tierFor,
     tierAbove: tierAbove,
+    standing: standing,
+    bonusNow: bonusNow,
+    weeklyBonusHours: weeklyBonusHours,
     requirement: requirement,
     plan: plan,
     pastPeriods: pastPeriods,

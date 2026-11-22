@@ -297,19 +297,71 @@ details[open] > summary { margin-bottom: 14px; }
 .tip-row span { color: var(--ink-2); }
 
 /* ---------- requirements ---------- */
-.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.checks li { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; padding: 11px 0; border-top: 1px solid var(--line); }
-.checks li:first-child { border-top: 0; padding-top: 0; }
-.check-name { font-weight: 600; }
-.check-detail { grid-column: 1; font-size: 0.88rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.checks .chip { grid-row: 1 / span 2; grid-column: 2; }
+.standing { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; color: var(--ink-2); max-width: 62ch; }
+.standing-line { color: var(--ink); font-weight: 500; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.standing-tier {
+  display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem;
+  border: 1px solid var(--edge); border-radius: 999px; padding: 1px 12px 1px 10px; background: var(--surface-2);
+}
+.muted { color: var(--muted); }
+.reqtable { min-width: 300px; }
+@media (max-width: 480px) {
+  .reqtable { font-size: 0.8rem; }
+  .reqtable thead th { font-size: 0.66rem; letter-spacing: 0; padding: 0 2px 8px; }
+  .reqtable td, .reqtable tbody th { padding: 8px 2px; }
+  .reqtable .ic { width: 9px; height: 9px; margin-right: 2px; }
+  .reqtable tbody th .swatch { margin-right: 5px; }
+  .reqtable .tag { display: none; }
+}
+.reqtable thead th, .reqtable td { text-align: center; }
+.reqtable thead th:first-child { text-align: left; }
+.reqtable tbody th { text-align: left; font-weight: 600; padding: 9px 6px; border-top: 1px solid var(--line); white-space: nowrap; }
+.reqtable tbody th .swatch { margin-right: 7px; vertical-align: 0; }
+.reqtable tr.you th, .reqtable tr.you td { background: var(--surface-2); font-weight: 700; }
+.reqtable tr.you th { border-radius: 8px 0 0 8px; }
+.reqtable tr.you td:last-child { border-radius: 0 8px 8px 0; }
+.reqtable tr.is-target th, .reqtable tr.is-target td { background: var(--accent-wash); }
+.reqtable td.miss { color: var(--bad); font-weight: 600; }
+.reqtable td.na { color: var(--muted); }
+.reqtable .ic { width: 11px; height: 11px; margin-right: 4px; vertical-align: -1px; }
+.reqtable td.ok .ic { color: var(--good); }
+.tag {
+  margin-left: 7px; font-family: var(--font-body); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent); border: 1px solid currentColor; padding: 0 5px; border-radius: 4px; vertical-align: 1px;
+}
+
+/* ---------- extra-point hours ---------- */
+.bonus-now { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 10px; background: var(--surface-2); }
+.bonus-now.on { background: var(--accent-wash); }
+.bonus-now svg { width: 28px; height: 28px; flex: none; color: var(--muted); }
+.bonus-now.on svg { color: var(--accent); }
+.bonus-big { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; }
+.bonus-sub { color: var(--ink-2); font-size: 0.94rem; }
+.sched { list-style: none; margin: 12px 0 10px; padding: 0; }
+.sched li { display: grid; grid-template-columns: minmax(7.5em, auto) 1fr; align-items: center; gap: 4px 12px; padding: 9px 0; border-top: 1px solid var(--line); }
+.sched li:first-child { border-top: 0; }
+.sched-day { font-weight: 600; color: var(--ink-2); }
+.sched-day em { font-style: normal; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-left: 4px; }
+.sched li.is-today .sched-day { color: var(--ink); }
+.sched-times { display: flex; flex-wrap: wrap; gap: 6px; }
+.sched-times span { background: var(--surface-2); border-radius: 6px; padding: 2px 9px; font-size: 0.9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sched li.is-today .sched-times span { background: var(--accent-wash); }
+.bonus-foot { margin: 0; }
+.trip-range { margin-top: 12px; color: var(--ink-2); font-size: 0.93rem; }
+.trip-range strong { color: var(--ink); }
+.mix-text { font-size: 0.92rem; color: var(--ink-2); max-width: 40ch; }
+.mix-text strong { color: var(--ink); font-size: 1.05rem; }
+.tier-set { margin: 0 0 14px; }
+.tier-set legend { display: flex; align-items: center; gap: 7px; font-size: 1rem; margin-bottom: 6px; }
+.tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+.form-row.four { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
 
 /* ---------- history ---------- */
 .table-wrap { overflow-x: auto; margin: 0 -4px; }
 table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.93rem; }
-th { text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); padding: 0 6px 8px; white-space: nowrap; }
+thead th { text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); padding: 0 6px 8px; white-space: nowrap; }
 td { text-align: right; padding: 9px 6px; border-top: 1px solid var(--line); white-space: nowrap; }
-th:first-child, td:first-child { text-align: left; }
+thead th:first-child, td:first-child { text-align: left; }
 td.pos { color: var(--good); }
 td .del { border: 1px solid transparent; background: transparent; color: var(--muted); border-radius: 7px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem; }
 td .del:hover { border-color: var(--edge); color: var(--ink); }
@@ -376,30 +428,36 @@ footer strong { color: var(--ink-2); font-weight: 600; }
 
     <section class="card" id="checkinCard" style="order: 2" hidden>
       <div class="card-head">
-        <h2>Update your points</h2>
-        <p class="card-sub">Copy the numbers from Uber Pro in the Driver app. Saving the same day again replaces that day's numbers.</p>
+        <h2>Update your numbers</h2>
+        <p class="card-sub">Copy them from Uber Pro in the Driver app: the status table and Your points. Saving the same day again replaces that day.</p>
       </div>
       <form id="checkinForm" novalidate>
         <div class="form-row two">
           <label class="field field-big"><span>Points this period</span>
             <input id="ciPoints" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" required>
           </label>
+          <label class="field field-big"><span>Trips this period</span>
+            <input id="ciTrips" type="number" inputmode="numeric" min="0" step="1" autocomplete="off">
+          </label>
           <label class="field"><span>As of</span>
             <input id="ciDate" type="date">
           </label>
         </div>
-        <div class="form-row three">
-          <label class="field"><span>Star rating</span>
-            <input id="ciRating" type="number" inputmode="decimal" min="1" max="5" step="0.01" autocomplete="off">
-          </label>
+        <div class="form-row four">
           <label class="field"><span>Acceptance %</span>
             <input id="ciAcceptance" type="number" inputmode="decimal" min="0" max="100" step="0.1" autocomplete="off">
           </label>
           <label class="field"><span>Cancellation %</span>
             <input id="ciCancellation" type="number" inputmode="decimal" min="0" max="100" step="0.1" autocomplete="off">
           </label>
+          <label class="field"><span>Star rating</span>
+            <input id="ciRating" type="number" inputmode="decimal" min="1" max="5" step="0.01" autocomplete="off">
+          </label>
+          <label class="field"><span>Driving Insights</span>
+            <input id="ciInsights" type="number" inputmode="numeric" min="0" max="100" step="1" autocomplete="off">
+          </label>
         </div>
-        <p class="hint">The three rates are optional. Leave a box empty to keep your last number.</p>
+        <p class="hint">Only points are required. Trips is the total of the Trips column under Your points; it lets the plan count your 3-point trips. Leave any other box empty to keep your last number.</p>
         <p class="form-error" id="ciError" role="alert" hidden></p>
         <button class="btn primary" type="submit" id="ciSave">Save check-in</button>
       </form>
@@ -411,6 +469,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
         <p class="card-sub" id="planSub"></p>
       </div>
       <div class="tiles" id="planTiles"></div>
+      <p class="trip-range" id="tripRange"></p>
       <div class="controls">
         <div class="control">
           <span class="control-label" id="dpwLabel">Days you drive each week</span>
@@ -420,14 +479,37 @@ footer strong { color: var(--ink-2); font-weight: 600; }
             <button type="button" id="dpwPlus" aria-label="More days a week">+</button>
           </div>
         </div>
-        <label class="control"><span class="control-label">Average points per trip</span>
-          <input id="pptInput" type="number" inputmode="decimal" min="0.1" max="50" step="0.1">
-        </label>
+        <div class="control" id="mixControl">
+          <span class="control-label">Average points per trip</span>
+          <p class="mix-text" id="mixText" hidden></p>
+          <input id="pptInput" type="number" inputmode="decimal" min="1" max="3" step="0.1" aria-label="Average points per trip">
+        </div>
       </div>
       <div class="pace" id="paceBlock"></div>
     </section>
 
-    <section class="card" id="chartCard" style="order: 4" hidden>
+    <section class="card" id="bonusCard" style="order: 4" hidden>
+      <div class="card-head">
+        <h2>Extra-point hours</h2>
+        <p class="card-sub">Trips that start or end in these hours earn 3 points instead of 1.</p>
+      </div>
+      <div class="bonus-now" id="bonusNow"></div>
+      <ul class="sched" id="bonusSched"></ul>
+      <p class="hint bonus-foot" id="bonusFoot"></p>
+    </section>
+
+    <section class="card" id="qualityCard" style="order: 5" hidden>
+      <div class="card-head">
+        <h2>Status requirements</h2>
+        <p class="card-sub" id="qualitySub"></p>
+      </div>
+      <div class="standing" id="standingNote"></div>
+      <div class="table-wrap">
+        <table class="reqtable" id="reqTable"></table>
+      </div>
+    </section>
+
+    <section class="card" id="chartCard" style="order: 6" hidden>
       <div class="card-head">
         <h2>Points this period</h2>
         <p class="card-sub" id="chartSub"></p>
@@ -443,29 +525,21 @@ footer strong { color: var(--ink-2); font-weight: 600; }
       </div>
     </section>
 
-    <section class="card" id="qualityCard" style="order: 5" hidden>
-      <div class="card-head">
-        <h2>Status requirements</h2>
-        <p class="card-sub">Points are only part of it. Uber also checks your rates for Gold and up. Set your city's exact numbers in settings.</p>
-      </div>
-      <ul class="checks" id="qualityList"></ul>
-    </section>
-
-    <section class="card" id="historyCard" style="order: 6" hidden>
+    <section class="card" id="historyCard" style="order: 7" hidden>
       <div class="card-head">
         <h2>Check-ins</h2>
         <p class="card-sub" id="historySub"></p>
       </div>
       <div class="table-wrap">
         <table id="historyTable">
-          <thead><tr><th scope="col">Date</th><th scope="col">Points</th><th scope="col">Change</th><th scope="col">Rating</th><th scope="col">Accept</th><th scope="col">Cancel</th><th scope="col"><span class="sr-only">Delete</span></th></tr></thead>
+          <thead><tr><th scope="col">Date</th><th scope="col">Points</th><th scope="col">Change</th><th scope="col">Trips</th><th scope="col">Accept</th><th scope="col">Cancel</th><th scope="col">Rating</th><th scope="col">Insights</th><th scope="col"><span class="sr-only">Delete</span></th></tr></thead>
           <tbody id="historyBody"></tbody>
         </table>
       </div>
       <p class="empty" id="historyEmpty" hidden>No check-ins yet this period. Add your points above.</p>
     </section>
 
-    <section class="card" id="pastCard" style="order: 7" hidden>
+    <section class="card" id="pastCard" style="order: 8" hidden>
       <div class="card-head">
         <h2>Past periods</h2>
         <p class="card-sub">Where you finished. Status you earn in one period applies for the next.</p>
@@ -473,10 +547,10 @@ footer strong { color: var(--ink-2); font-weight: 600; }
       <ul class="past" id="pastList"></ul>
     </section>
 
-    <section class="card" id="settingsCard" style="order: 8">
+    <section class="card" id="settingsCard" style="order: 9">
       <details id="settingsDetails">
-        <summary id="settingsSummary">Tier points and settings</summary>
-        <p class="setup-intro" id="setupIntro" hidden>Open Uber Pro in the Driver app. It shows the points each tier needs in your city and the date this period ends. Enter them once here. You can change them any time.</p>
+        <summary id="settingsSummary">Tier requirements and settings</summary>
+        <p class="setup-intro" id="setupIntro" hidden>These come from How Uber Pro works in the Driver app (Menu, then Uber Pro). The table below is filled in from the app as of November 2026. Check it against yours, then add your points so far.</p>
         <form id="settingsForm" novalidate>
           <fieldset>
             <legend>Tier you're going for</legend>
@@ -486,34 +560,30 @@ footer strong { color: var(--ink-2); font-weight: 600; }
               <label><input type="radio" name="target" value="diamond" id="tgDiamond"><span><i class="swatch diamond"></i>Diamond</span></label>
             </div>
           </fieldset>
-          <fieldset>
-            <legend>Points each tier needs in your city</legend>
-            <div class="form-row three">
-              <label class="field"><span><i class="swatch gold"></i>Gold</span><input id="tierGold" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
-              <label class="field"><span><i class="swatch platinum"></i>Platinum</span><input id="tierPlatinum" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
-              <label class="field"><span><i class="swatch diamond"></i>Diamond</span><input id="tierDiamond" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
-            </div>
-            <p class="hint">Only your target tier is required. Add the others to see them on the chart.</p>
-          </fieldset>
-          <div class="form-row two" id="setupPointsRow" hidden>
-            <label class="field field-big"><span>Your points so far this period</span>
-              <input id="setupPoints" type="number" inputmode="numeric" min="0" step="1" placeholder="0">
-            </label>
-          </div>
           <div class="form-row two">
+            <label class="field"><span>Your status right now</span>
+              <select id="currentStatus">
+                <option value="">Not set</option>
+                <option value="blue">Blue</option>
+                <option value="gold">Gold</option>
+                <option value="platinum">Platinum</option>
+                <option value="diamond">Diamond</option>
+              </select>
+            </label>
             <label class="field"><span>Uber Pro periods start in</span>
               <select id="cycleSelect"></select>
             </label>
           </div>
           <p class="hint" id="cycleHint"></p>
+          <div id="setupPointsRow" class="form-row two" hidden>
+            <label class="field field-big"><span>Your points so far this period</span>
+              <input id="setupPoints" type="number" inputmode="numeric" min="0" step="1" placeholder="0">
+            </label>
+          </div>
           <fieldset>
-            <legend>Rate requirements for your target tier</legend>
-            <div class="form-row three">
-              <label class="field"><span>Min rating</span><input id="reqRating" type="number" inputmode="decimal" min="1" max="5" step="0.01" placeholder="None"></label>
-              <label class="field"><span>Min acceptance %</span><input id="reqAcceptance" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="None"></label>
-              <label class="field"><span>Max cancel %</span><input id="reqCancellation" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="None"></label>
-            </div>
-            <p class="hint">Starts with the 4.85 rating and 4% cancellation limits from Uber's help pages. These vary by city and tier and changed in 2026, so match them to your app. Leave a box empty if it doesn't apply.</p>
+            <legend>What each tier needs in your city</legend>
+            <div id="tierInputs"></div>
+            <p class="hint">Points is the only box a tier must have. Leave a rate empty if your app shows a dash for it.</p>
           </fieldset>
           <p class="form-error" id="setError" role="alert" hidden></p>
           <button class="btn primary" type="submit" id="setSave">Save settings</button>
@@ -524,8 +594,8 @@ footer strong { color: var(--ink-2); font-weight: 600; }
   </main>
 
   <footer>
-    <p><strong>Where the numbers come from.</strong> Uber doesn't let outside apps read Uber Pro points, so this planner works from what you type in. Open Uber Pro in the Driver app for your points, the date the period ends and what each tier needs. Your rating and rates are on the same screens.</p>
-    <p><strong>How the plan works.</strong> Points needed are split across the days left, counting today, at the number of days you drive each week. Your pace is your points divided by the days so far this period. Points reset to zero when a new period starts.</p>
+    <p><strong>Where the numbers come from.</strong> Uber doesn't let outside apps read Uber Pro, so this planner works from what you type in. Everything it asks for is on How Uber Pro works in the Driver app.</p>
+    <p><strong>How the plan works.</strong> Points needed are split across the days left, counting today, at the number of days you drive each week. Trips use your own mix of 1-point and 3-point trips. Your pace is your points divided by the days so far this period. Status is the highest tier where you meet every requirement, and points reset to zero when a new period starts.</p>
   </footer>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
@@ -561,6 +631,8 @@ footer strong { color: var(--ink-2); font-weight: 600; }
   function today() { return PM.localToday(); }
   function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
   function fmt1(n) { return (Math.round(n * 10) / 10).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+  function fmt2(n) { return (Math.round(n * 100) / 100).toFixed(2); }
+  function fmtLoose(n) { return Number.isInteger(n) ? String(n) : fmt1(n); }
   function plural(n, one, many) { return fmt(n) + ' ' + (Math.round(n) === 1 ? one : many); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function settingsNow() { return PM.normalizeSettings(state.settings || PM.DEFAULT_SETTINGS); }
@@ -568,6 +640,21 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     raw = raw && typeof raw === 'object' ? raw : {};
     var meta = raw.periodMeta && typeof raw.periodMeta === 'object' ? raw.periodMeta : {};
     return { checkins: PM.sortCheckins(raw.checkins), periodMeta: meta };
+  }
+  function critValue(c, v) {
+    if (v === null || v === undefined) return '';
+    if (c.key === 'rating') return fmt2(v);
+    return fmtLoose(v) + c.unit;
+  }
+  function hourText(h) {
+    h = ((h % 24) + 24) % 24;
+    var ap = h < 12 ? 'AM' : 'PM';
+    return (h % 12 === 0 ? 12 : h % 12) + ' ' + ap;
+  }
+  function rangeText(s, e) {
+    if (e === 24) return hourText(s) + ' to midnight';
+    var same = (s < 12) === (e < 12);
+    return same ? (s % 12 === 0 ? 12 : s % 12) + ' to ' + hourText(e) : hourText(s) + ' to ' + hourText(e);
   }
 
   /* ---------------- storage ---------------- */
@@ -681,8 +768,11 @@ footer strong { color: var(--ink-2); font-weight: 600; }
   var ICON = {
     check: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     alert: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2L14.6 13.6H1.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 6.6v3.2M8 11.9v.1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    cross: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
     star: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.3 4 13.6l1-4.4-3.4-3 4.5-.5Z" fill="currentColor"/></svg>',
     minus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+    bolt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.5 2L4 13.5h6.5L9.5 22 20 9.5h-6.5Z" fill="currentColor"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5.5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   };
 
   /* ---------------- render ---------------- */
@@ -694,49 +784,54 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     var t = today();
     var P = PM.plan({ today: t, settings: s, checkins: state.log.checkins });
     lastPlan = P;
-    var setupMode = !state.settings;
+    var setupMode = !state.settings || P.status === 'setup';
 
-    $('periodChip').textContent = P.period.label + ' · ' + PM.fmtDate(P.period.start) + ' to ' + PM.fmtDate(P.period.end);
+    $('periodChip').textContent = P.period.label.charAt(0) === 'Q'
+      ? P.period.label + ' · ' + PM.fmtDate(P.period.start) + ' to ' + PM.fmtDate(P.period.end)
+      : PM.fmtDate(P.period.start) + ' to ' + PM.fmtDate(P.period.end, true);
 
     renderHero(P, setupMode);
     renderSettingsCard(P, setupMode);
 
-    ['checkinCard', 'planCard', 'chartCard', 'qualityCard', 'historyCard'].forEach(function (id) { $(id).hidden = setupMode; });
+    ['checkinCard', 'planCard', 'bonusCard', 'chartCard', 'qualityCard', 'historyCard'].forEach(function (id) { $(id).hidden = setupMode; });
     if (setupMode) { $('pastCard').hidden = true; return; }
 
     renderCheckinForm(P);
     renderPlan(P);
-    renderChart(P);
+    renderBonus(P);
     renderQuality(P);
+    renderChart(P);
     renderHistory(P);
     renderPast(P);
   }
 
   function renderHero(P, setupMode) {
     var pill = $('heroPill');
-    var track = $('heroTrack');
     var endDate = PM.fmtDate(P.period.end);
     var nextRange = PM.fmtDate(P.period.nextStart) + ' to ' + PM.fmtDate(P.period.nextEnd, true);
+    var goalWord = (P.keeping ? 'Keep ' : '') + P.targetName;
+    var nowStatus = P.settings.currentStatus && P.settings.currentStatus !== 'blue'
+      ? 'You’re ' + PM.tierName(P.settings.currentStatus) + ' through ' + endDate + '. ' : '';
     pill.hidden = true;
-    track.hidden = true;
+    $('heroTrack').hidden = true;
 
-    if (setupMode || P.status === 'setup') {
-      $('heroEyebrow').textContent = P.period.label + ' ends ' + endDate;
+    if (setupMode) {
+      $('heroEyebrow').textContent = 'Period ends ' + PM.fmtDate(P.period.end, true);
       $('heroBig').textContent = fmt(P.daysLeft);
       $('heroBigLabel').textContent = P.daysLeft === 1 ? 'day left' : 'days left';
-      $('heroLine').textContent = state.loaded
-        ? 'Set your target tier below to see how many points you need each day.'
-        : (state.slow ? 'Still reaching your saved data. You can set up below in the meantime.' : 'Loading your saved data…');
+      $('heroLine').textContent = !state.loaded && !state.slow
+        ? 'Loading your saved data…'
+        : (P.latest ? 'You have ' + plural(P.points, 'point', 'points') + ' so far. ' : '') + 'Check your tier requirements below to see your plan.';
       $('heroNote').textContent = 'Status you earn by ' + endDate + ' applies ' + nextRange + '.';
       return;
     }
 
     if (P.status === 'nodata') {
-      $('heroEyebrow').textContent = P.targetName + ' by ' + endDate;
+      $('heroEyebrow').textContent = goalWord + ' by ' + endDate;
       $('heroBig').textContent = fmt(P.targetPoints);
       $('heroBigLabel').textContent = 'points for ' + P.targetName;
       $('heroLine').textContent = plural(P.daysLeft, 'day', 'days') + ' left. Add your current points to see your plan.';
-      $('heroNote').textContent = 'New period, so points start from zero. Status you earn by ' + endDate + ' applies ' + nextRange + '.';
+      $('heroNote').textContent = 'New period, so points start from zero. ' + nowStatus + 'Status you earn by ' + endDate + ' applies ' + nextRange + '.';
       renderTrack(P);
       return;
     }
@@ -745,31 +840,42 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     pill.hidden = false;
     if (P.status === 'reached') {
       pill.className = 'pill reached';
-      pill.innerHTML = ICON.star + '<span>' + esc(P.targetName) + ' reached</span>';
-      $('heroEyebrow').textContent = P.period.label + ' · ' + plural(P.daysLeft, 'day', 'days') + ' left';
+      pill.innerHTML = ICON.star + '<span>' + esc(P.targetName) + ' points reached</span>';
+      $('heroEyebrow').textContent = goalWord + ' · ' + plural(P.daysLeft, 'day', 'days') + ' left';
       $('heroBig').textContent = fmt(P.points);
       $('heroBigLabel').textContent = 'points';
       $('heroLine').textContent = P.stretch
         ? fmt(P.stretch.needed) + ' more for ' + P.stretch.tierName + ', about ' + fmt(P.stretch.perDrivingDay) + ' a driving day.'
-        : 'You have the points. Keep your rates in range to hold it.';
-      $('heroNote').textContent = 'Keep your rates in range and ' + P.targetName + ' applies ' + nextRange + '.' + asOf;
+        : 'You have the points. Keep your other numbers in range to hold it.';
+      $('heroNote').textContent = (P.blockers.length ? 'Still below ' + P.targetName + ' on ' + blockerWords(P) + '. ' : '') +
+        'Meet every requirement and ' + P.targetName + ' applies ' + nextRange + '.' + asOf;
     } else {
       var ok = P.status === 'ontrack';
       pill.className = 'pill ' + P.status;
       pill.innerHTML = (ok ? ICON.check : ICON.alert) + '<span>' + (ok ? 'On track' : 'Behind pace') + '</span>';
-      $('heroEyebrow').textContent = P.targetName + ' by ' + endDate;
+      $('heroEyebrow').textContent = goalWord + ' by ' + endDate;
       $('heroBig').textContent = fmt(P.needed);
       $('heroBigLabel').textContent = P.needed === 1 ? 'point to go' : 'points to go';
-      $('heroLine').textContent = plural(P.daysLeft, 'day', 'days') + ' left · ' + fmt(P.perDrivingDay) + ' points a driving day';
-      $('heroNote').textContent = 'You have ' + fmt(P.points) + ' of ' + fmt(P.targetPoints) + '. Status you earn by ' + endDate + ' applies ' + nextRange + '.' + asOf;
+      $('heroLine').textContent = plural(P.daysLeft, 'day', 'days') + ' left · ' + fmt(P.perDrivingDay) + ' points a driving day (about ' +
+        plural(P.tripsPerDrivingDay, 'trip', 'trips') + ')';
+      $('heroNote').textContent = 'You have ' + fmt(P.points) + ' of ' + fmt(P.targetPoints) + '. ' + nowStatus +
+        'What you earn by ' + endDate + ' sets your status for ' + nextRange + '.' + asOf;
     }
     renderTrack(P);
   }
 
+  function blockerWords(P) {
+    var names = { points: 'points' };
+    PM.CRITERIA.forEach(function (c) { names[c.key] = c.label.toLowerCase(); });
+    var list = P.blockers.filter(function (k) { return k !== 'points'; }).map(function (k) { return names[k]; });
+    if (list.length <= 1) return list.join('');
+    return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+  }
+
   function renderTrack(P) {
     var track = $('heroTrack');
-    var tiers = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key] !== null; })
-      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key] }; });
+    var tiers = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key].points !== null; })
+      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key].points }; });
     if (!tiers.length) return;
     var showProj = P.latest && P.status !== 'reached' && P.projected !== P.points;
     var top = Math.max.apply(null, tiers.map(function (t) { return t.v; }).concat([P.points, showProj ? P.projected : 0]));
@@ -813,7 +919,6 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     track.setAttribute('role', 'img');
     track.setAttribute('aria-label', fmt(P.points) + ' points. ' + tiers.map(function (t) { return t.name + ' at ' + fmt(t.v); }).join(', ') + '.' +
       (showProj ? ' Projected finish ' + fmt(P.projected) + '.' : ''));
-    track.hidden = false;
   }
 
   function tile(label, value, unit, sub, lead) {
@@ -830,8 +935,8 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     if (P.status === 'reached') {
       $('planTitle').textContent = P.stretch ? 'Going for ' + P.stretch.tierName : 'What you need to drive';
       $('planSub').textContent = P.stretch
-        ? 'You have ' + P.targetName + '. Here is what ' + P.stretch.tierName + ' would take by ' + PM.fmtDate(P.period.end) + '.'
-        : 'You have the points for ' + P.targetName + '. Nothing more to drive for status this period.';
+        ? 'You have the points for ' + P.targetName + '. Here is what ' + P.stretch.tierName + ' would take by ' + PM.fmtDate(P.period.end) + '.'
+        : 'You have the points for ' + P.targetName + '. Nothing more to drive for points this period.';
     } else {
       $('planTitle').textContent = 'What you need to drive';
       $('planSub').textContent = 'To reach ' + fmt(P.targetPoints) + ' for ' + P.targetName + ', from today through ' + PM.fmtDate(P.period.end) + '.';
@@ -842,21 +947,33 @@ footer strong { color: var(--ink-2); font-weight: 600; }
         tile('Each driving day', fmt(R.perDrivingDay), 'pts', 'about ' + fmt(R.tripsPerDrivingDay) + ' ' + tripWord(R.tripsPerDrivingDay), true) +
         tile('Each week', fmt(R.perWeek), 'pts', 'about ' + fmt(R.tripsPerWeek) + ' ' + tripWord(R.tripsPerWeek)) +
         tile('Driving days left', fmt(R.drivingDaysLeft), '', 'of ' + plural(P.daysLeft, 'day', 'days') + ' at ' + s.daysPerWeek + ' a week') +
-        tile('Trips to go', fmt(R.tripsTotal), '', 'at ' + fmt1(s.pointsPerTrip) + ' pts a trip');
+        tile('Trips to go', fmt(R.tripsTotal), '', 'at ' + fmt2(P.mix.avg) + ' pts a trip');
+      $('tripRange').innerHTML = 'Every 3-point trip saves you two regular ones. All in extra-point hours: <strong>' + fmt(R.tripsAllBonus) +
+        ' trips</strong>. None in them: <strong>' + fmt(R.tripsAllRegular) + '</strong>.';
+      $('tripRange').hidden = R.needed === 0;
     } else {
       $('planTiles').innerHTML = '';
+      $('tripRange').hidden = true;
     }
 
     $('dpwValue').textContent = s.daysPerWeek + (s.daysPerWeek === 1 ? ' day' : ' days');
     $('dpwMinus').disabled = s.daysPerWeek <= 1;
     $('dpwPlus').disabled = s.daysPerWeek >= 7;
-    if (document.activeElement !== $('pptInput')) $('pptInput').value = String(s.pointsPerTrip);
+    var fromTrips = P.mix.source === 'trips';
+    $('mixText').hidden = !fromTrips;
+    $('pptInput').hidden = fromTrips;
+    if (fromTrips) {
+      $('mixText').innerHTML = '<strong>' + fmt2(P.mix.avg) + '</strong>, from ' + fmt(P.mix.points) + ' points over ' + plural(P.mix.trips, 'trip', 'trips') +
+        ' (' + fmt(P.mix.bonusTrips) + ' at 3 points). It updates when you add trips to a check-in.';
+    } else if (document.activeElement !== $('pptInput')) {
+      $('pptInput').value = String(s.pointsPerTrip);
+    }
 
     var html = '';
     if (!P.latest) {
       html = '<p>Add a check-in to see your pace.</p>';
     } else if (P.status === 'reached') {
-      html = '<p>You reached ' + esc(P.targetName) + ' on <strong>' + esc(PM.fmtDate(P.reachDate)) + '</strong>, averaging <strong>' + fmt1(P.pacePerDay) + ' points a day</strong>.' +
+      html = '<p>You reached ' + esc(P.targetName) + '’s points on <strong>' + esc(PM.fmtDate(P.reachDate)) + '</strong>, averaging <strong>' + fmt1(P.pacePerDay) + ' points a day</strong>.' +
         (P.stretch ? ' At that pace you finish near <strong>' + fmt(P.projected) + '</strong>' + (P.projected >= P.stretch.goal ? ', enough for ' + esc(P.stretch.tierName) + '.' : '.') : '') + '</p>';
     } else {
       html = '<p>So far you average <strong>' + fmt1(P.pacePerDay) + ' points a day</strong>. From here you need <strong>' + fmt1(P.perCalendarDay) + ' a day</strong>, counting every day left.</p>';
@@ -864,7 +981,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
         html += '<p>At this pace you reach ' + esc(P.targetName) + ' around <strong>' + esc(PM.fmtDate(P.reachDate)) + '</strong> and finish near <strong>' + fmt(P.projected) + '</strong>.</p>';
       } else {
         html += '<p>At this pace you finish near <strong>' + fmt(P.projected) + '</strong>' +
-          (P.projectedTier !== 'blue' ? ' (' + esc(PM.tierName(P.projectedTier)) + ')' : '') +
+          (P.projectedStanding !== 'blue' ? ' (' + esc(PM.tierName(P.projectedStanding)) + ')' : '') +
           ', <strong>' + fmt(P.targetPoints - P.projected) + ' short</strong> of ' + esc(P.targetName) + '.</p>';
       }
       var chips = '';
@@ -876,6 +993,106 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     $('paceBlock').innerHTML = html;
   }
 
+  /* ---------------- extra-point hours ---------------- */
+
+  var SCHED_GROUPS = [
+    { label: 'Mon to Thu', days: [1, 2, 3, 4] },
+    { label: 'Friday', days: [5] },
+    { label: 'Sat and Sun', days: [6, 0] },
+  ];
+
+  function renderBonus(P) {
+    var now = new Date();
+    var day = now.getDay();
+    var b = PM.bonusNow(day, now.getHours() * 60 + now.getMinutes(), PM.DEFAULT_BONUS_HOURS);
+    var head, sub;
+    if (b.active) {
+      head = '3 points a trip right now';
+      var until = b.endsAtMidnight && b.endDay === 0 ? 'midnight' : hourText(b.endHour) + (b.endDay >= 1 ? ' tonight' : '');
+      sub = 'Extra-point hours until ' + until + '.';
+    } else if (b.nextDay !== null) {
+      head = 'Regular hours: 1 point a trip';
+      var when = b.nextDay === 0 ? 'today' : b.nextDay === 1 ? 'tomorrow' : PM.DAYS[(day + b.nextDay) % 7];
+      sub = 'Next 3-point window: ' + when + ', ' + rangeText(b.nextHour, b.nextEndHour) + '.';
+    } else {
+      head = 'No extra-point hours set';
+      sub = '';
+    }
+    $('bonusNow').className = 'bonus-now' + (b.active ? ' on' : '');
+    $('bonusNow').innerHTML = (b.active ? ICON.bolt : ICON.clock) + '<div><div class="bonus-big">' + esc(head) + '</div><div class="bonus-sub">' + esc(sub) + '</div></div>';
+
+    $('bonusSched').innerHTML = SCHED_GROUPS.map(function (g) {
+      var wins = (PM.DEFAULT_BONUS_HOURS[g.days[0]] || []).map(function (w) { return '<span>' + esc(rangeText(w[0], w[1])) + '</span>'; }).join('');
+      var isToday = g.days.indexOf(day) !== -1;
+      return '<li class="' + (isToday ? 'is-today' : '') + '"><span class="sched-day">' + esc(g.label) + (isToday ? ' <em>today</em>' : '') + '</span><span class="sched-times">' + wins + '</span></li>';
+    }).join('');
+
+    var foot = PM.weeklyBonusHours(PM.DEFAULT_BONUS_HOURS) + ' extra-point hours a week, from the Driver app in November 2026. Uber can change them, so glance at How Uber Pro works now and then.';
+    if (P && P.mix.source === 'trips') {
+      foot = 'So far ' + fmt(P.mix.bonusTrips) + ' of your ' + plural(P.mix.trips, 'trip', 'trips') + ' earned 3 points. ' + foot;
+    }
+    $('bonusFoot').textContent = foot;
+  }
+
+  /* ---------------- requirements ---------------- */
+
+  function renderQuality(P) {
+    var s = P.settings;
+    var st = P.standing;
+    var target = P.targetName;
+    $('qualitySub').textContent = 'Your status is the highest tier where you meet every requirement, the way the Driver app’s table works.';
+
+    var notes = [];
+    var pointsShort = st.rows[P.target].cells.points === false;
+    var others = P.blockers.filter(function (k) { return k !== 'points'; });
+    var unknown = st.rows[P.target].unknown;
+    notes.push('<p class="standing-line"><span class="standing-tier">' + (st.tier === 'blue' ? '' : '<i class="swatch ' + st.tier + '"></i>') + esc(PM.tierName(st.tier)) + '</span> if the period ended today</p>');
+    if (!P.blockers.length) {
+      notes.push('<p>You meet everything ' + esc(target) + ' needs. Hold these numbers through ' + esc(PM.fmtDate(P.period.end)) + '.</p>');
+    } else if (pointsShort && !others.length) {
+      notes.push('<p>Points are the only thing between you and ' + esc(target) + '. Your other numbers already qualify.</p>');
+    } else {
+      var crit = {};
+      PM.CRITERIA.forEach(function (c) { crit[c.key] = c; });
+      var parts = others.map(function (k) {
+        var c = crit[k];
+        return c.label.toLowerCase() + ' (' + critValue(c, P.stats[k]) + ', needs ' + critValue(c, s.tiers[P.target][k]) + (c.dir === 'min' ? ' or more' : ' or less') + ')';
+      });
+      notes.push('<p>For ' + esc(target) + ' you also need to fix your ' + esc(parts.join(' and ')) + (pointsShort ? ', on top of the points' : '') + '.</p>');
+    }
+    if (unknown.length) {
+      var names = unknown.map(function (k) { return PM.CRITERIA.filter(function (c) { return c.key === k; })[0].label.toLowerCase(); });
+      notes.push('<p class="muted">Add your ' + esc(names.join(', ')) + ' in a check-in to check ' + (unknown.length === 1 ? 'it' : 'them') + ' too.</p>');
+    }
+    $('standingNote').innerHTML = notes.join('');
+
+    var cols = PM.CRITERIA.slice(0, 3).concat([{ key: 'points', short: 'Points', dir: 'min', unit: '' }, PM.CRITERIA[3]]);
+    var head = '<thead><tr><th scope="col">Criteria</th>' + cols.map(function (c) { return '<th scope="col">' + esc(c.short) + '</th>'; }).join('') + '</tr></thead>';
+    var you = '<tr class="you"><th scope="row">You</th>' + cols.map(function (c) {
+      var v = c.key === 'points' ? fmt(P.points) : critValue(c, P.stats[c.key]);
+      return '<td>' + (v === '' ? '<span class="muted">?</span>' : esc(v)) + '</td>';
+    }).join('') + '</tr>';
+    var rows = PM.TIERS.map(function (t) {
+      var req = s.tiers[t.key];
+      var row = st.rows[t.key];
+      var cells = cols.map(function (c) {
+        var v = req[c.key];
+        if (v === null) return '<td class="na">·</td>';
+        var ok = row.cells[c.key];
+        var shown = c.key === 'points' ? fmt(v) : critValue(c, v);
+        var cls = ok === true ? 'ok' : ok === false ? 'miss' : '';
+        var icon = ok === true ? ICON.check : ok === false ? ICON.cross : '';
+        var label = ok === true ? ', you meet it' : ok === false ? ', you miss it' : ', not entered yet';
+        return '<td class="' + cls + '">' + icon.replace('<svg ', '<svg class="ic" ') + esc(shown) + '<span class="sr-only">' + label + '</span></td>';
+      }).join('');
+      var tag = t.key === P.target ? '<span class="tag">Goal</span><span class="sr-only"> (your goal)</span>' : '';
+      return '<tr class="' + (t.key === P.target ? 'is-target' : '') + '"><th scope="row"><i class="swatch ' + t.key + '"></i>' + esc(t.name) + tag + '</th>' + cells + '</tr>';
+    }).join('');
+    $('reqTable').innerHTML = head + '<tbody>' + you + rows + '</tbody>';
+  }
+
+  /* ---------------- check-in form ---------------- */
+
   function renderCheckinForm(P) {
     var d = $('ciDate');
     d.min = P.period.start;
@@ -883,26 +1100,14 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     if (!d.value || d.value < P.period.start || d.value > P.today) d.value = P.today;
     var last = P.latest;
     $('ciPoints').placeholder = last ? 'Last: ' + fmt(last.points) : 'From Uber Pro';
-    var q = {};
-    P.quality.forEach(function (x) { q[x.key] = x.value; });
-    $('ciRating').placeholder = q.rating !== null ? String(q.rating) : '4.92';
-    $('ciAcceptance').placeholder = q.acceptance !== null ? String(q.acceptance) : 'Optional';
-    $('ciCancellation').placeholder = q.cancellation !== null ? String(q.cancellation) : 'Optional';
-  }
-
-  function renderQuality(P) {
-    var rows = P.quality.map(function (q) {
-      var val = q.value === null ? 'Not entered' : (q.key === 'rating' ? q.value.toFixed(2) : fmt1(q.value) + '%');
-      var reqTxt = q.req === null ? '' : (q.key === 'rating' ? q.req.toFixed(2) : fmt1(q.req) + '%');
-      var req = q.req === null ? 'no requirement set' : 'needs ' + reqTxt + (q.dir === 'min' ? ' or higher' : ' or lower');
-      var chip;
-      if (q.ok === true) chip = '<span class="chip good">' + ICON.check + 'Meets it</span>';
-      else if (q.ok === false) chip = '<span class="chip bad">' + ICON.alert + (q.dir === 'min' ? 'Too low' : 'Too high') + '</span>';
-      else chip = '<span class="chip neutral">' + ICON.minus + (q.req === null ? 'No limit' : 'Add yours') + '</span>';
-      return '<li><span class="check-name">' + esc(q.label) + '</span>' + chip +
-        '<span class="check-detail">' + esc(val) + ' · ' + esc(P.targetName) + ' ' + esc(req) + '</span></li>';
+    var lastTrips = null;
+    P.checkins.forEach(function (c) { if (c.trips !== null) lastTrips = c.trips; });
+    $('ciTrips').placeholder = lastTrips !== null ? 'Last: ' + fmt(lastTrips) : 'Optional';
+    var map = { acceptance: 'ciAcceptance', cancellation: 'ciCancellation', rating: 'ciRating', insights: 'ciInsights' };
+    PM.CRITERIA.forEach(function (c) {
+      var v = P.stats[c.key];
+      $(map[c.key]).placeholder = v !== null ? critValue(c, v).replace('%', '') : 'Optional';
     });
-    $('qualityList').innerHTML = rows.join('');
   }
 
   var pendingDelete = null;
@@ -911,7 +1116,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     $('historyEmpty').hidden = list.length > 0;
     $('historyTable').hidden = list.length === 0;
     $('historySub').textContent = list.length
-      ? plural(list.length, 'check-in', 'check-ins') + ' in ' + P.period.label + '. This table is the data behind the chart.'
+      ? plural(list.length, 'check-in', 'check-ins') + ' this period. This table is the data behind the chart.'
       : '';
     var rows = [];
     for (var i = list.length - 1; i >= 0; i--) {
@@ -919,11 +1124,10 @@ footer strong { color: var(--ink-2); font-weight: 600; }
       var prev = i > 0 ? list[i - 1].points : null;
       var diff = prev === null ? null : c.points - prev;
       var confirm = pendingDelete === c.date;
+      var crit = PM.CRITERIA.map(function (k) { return '<td>' + esc(critValue(k, c[k.key])) + '</td>'; }).join('');
       rows.push('<tr><td>' + esc(PM.fmtDate(c.date)) + '</td><td><b>' + fmt(c.points) + '</b></td>' +
         '<td class="' + (diff > 0 ? 'pos' : '') + '">' + (diff === null ? '' : (diff > 0 ? '+' : '') + fmt(diff)) + '</td>' +
-        '<td>' + (c.rating === null ? '' : c.rating.toFixed(2)) + '</td>' +
-        '<td>' + (c.acceptance === null ? '' : fmt1(c.acceptance) + '%') + '</td>' +
-        '<td>' + (c.cancellation === null ? '' : fmt1(c.cancellation) + '%') + '</td>' +
+        '<td>' + (c.trips === null ? '' : fmt(c.trips)) + '</td>' + crit +
         '<td><button type="button" class="del' + (confirm ? ' confirm' : '') + '" data-date="' + esc(c.date) + '">' + (confirm ? 'Tap to delete' : 'Delete') + '</button></td></tr>');
     }
     $('historyBody').innerHTML = rows.join('');
@@ -934,7 +1138,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     $('pastCard').hidden = past.length === 0;
     $('pastList').innerHTML = past.map(function (p) {
       var chip = p.hitTarget === true
-        ? '<span class="chip good">' + ICON.check + esc(p.targetName) + ' reached</span>'
+        ? '<span class="chip good">' + ICON.check + esc(p.targetName) + ' points reached</span>'
         : p.hitTarget === false
           ? '<span class="chip warn">' + ICON.alert + 'Missed ' + esc(p.targetName) + '</span>'
           : '';
@@ -945,76 +1149,101 @@ footer strong { color: var(--ink-2); font-weight: 600; }
 
   /* ---------------- settings card ---------------- */
 
+  var TIER_FIELDS = [
+    { key: 'points', label: 'Points', step: '1', min: '1', max: '' },
+    { key: 'acceptance', label: 'Min accept %', step: '0.1', min: '0', max: '100' },
+    { key: 'cancellation', label: 'Max cancel %', step: '0.1', min: '0', max: '100' },
+    { key: 'rating', label: 'Min rating', step: '0.01', min: '1', max: '5' },
+    { key: 'insights', label: 'Min Insights', step: '1', min: '0', max: '100' },
+  ];
+  function tierInputId(tier, field) { return 't_' + tier + '_' + field; }
+
+  (function buildTierInputs() {
+    $('tierInputs').innerHTML = PM.TIERS.map(function (t) {
+      return '<fieldset class="tier-set"><legend><i class="swatch ' + t.key + '"></i>' + esc(t.name) + '</legend><div class="tier-grid">' +
+        TIER_FIELDS.map(function (f) {
+          return '<label class="field"><span>' + esc(f.label) + '</span><input id="' + tierInputId(t.key, f.key) + '" type="number" inputmode="decimal" step="' + f.step +
+            '" min="' + f.min + '"' + (f.max ? ' max="' + f.max + '"' : '') + ' placeholder="None"></label>';
+        }).join('') + '</div></fieldset>';
+    }).join('');
+    var sel = $('cycleSelect');
+    PM.CYCLES.forEach(function (c) {
+      var o = document.createElement('option');
+      o.value = String(c.value);
+      o.textContent = c.label;
+      sel.appendChild(o);
+    });
+  })();
+
   function renderSettingsCard(P, setupMode) {
     var card = $('settingsCard');
     var det = $('settingsDetails');
-    card.style.order = setupMode ? 1 : 8;
+    card.style.order = setupMode ? 1 : 9;
     // A returning driver's settings may still be on the way: don't flash the setup form at them.
     card.hidden = setupMode && !state.loaded && !state.slow;
     $('setupIntro').hidden = !setupMode;
     $('setupPointsRow').hidden = !setupMode;
-    $('settingsSummary').textContent = setupMode ? 'Set up your tracker' : 'Tier points and settings';
+    $('settingsSummary').textContent = setupMode ? 'Set up your tracker' : 'Tier requirements and settings';
     if (setupMode) det.open = true;
-    var btn = $('setSave');
-    btn.textContent = setupMode ? 'Start tracking' : 'Save settings';
+    $('setSave').textContent = setupMode ? 'Start tracking' : 'Save settings';
 
-    var note = state.mode === 'cloud'
+    $('storageNote').textContent = state.mode === 'cloud'
       ? 'Saved to your Claude account, private to you. It follows you to any device where you open this page signed in.'
       : state.mode === 'local'
         ? 'Saved in this browser only. Sign in to claude.ai and open the shared link to keep it across devices.'
         : '';
-    $('storageNote').textContent = note;
     $('cycleHint').textContent = 'This period: ' + PM.fmtDate(P.period.start, true) + ' to ' + PM.fmtDate(P.period.end, true) +
-      '. If that doesn’t match the end date in your app, pick another option.';
-    if (!settingsDirty) fillSettingsForm(settingsNow());
+      '. It should match the dates under Points in the Driver app.';
+    if (!settingsDirty) {
+      fillSettingsForm(settingsNow());
+      $('setupPoints').value = P.latest ? String(P.latest.points) : '';
+    }
   }
 
   function fillSettingsForm(s) {
-    var sel = $('cycleSelect');
-    if (!sel.options.length) {
-      PM.CYCLES.forEach(function (c) {
-        var o = document.createElement('option');
-        o.value = String(c.value);
-        o.textContent = c.label + (c.value === 0 ? ' (calendar quarters)' : '');
-        sel.appendChild(o);
-      });
-    }
-    sel.value = String(s.cycle);
+    $('cycleSelect').value = String(s.cycle);
+    $('currentStatus').value = s.currentStatus || '';
     document.querySelectorAll('input[name="target"]').forEach(function (r) { r.checked = r.value === s.target; });
-    $('tierGold').value = s.tiers.gold === null ? '' : s.tiers.gold;
-    $('tierPlatinum').value = s.tiers.platinum === null ? '' : s.tiers.platinum;
-    $('tierDiamond').value = s.tiers.diamond === null ? '' : s.tiers.diamond;
-    $('reqRating').value = s.reqs.rating === null ? '' : s.reqs.rating;
-    $('reqAcceptance').value = s.reqs.acceptance === null ? '' : s.reqs.acceptance;
-    $('reqCancellation').value = s.reqs.cancellation === null ? '' : s.reqs.cancellation;
+    PM.TIERS.forEach(function (t) {
+      TIER_FIELDS.forEach(function (f) {
+        var v = s.tiers[t.key][f.key];
+        $(tierInputId(t.key, f.key)).value = v === null ? '' : String(v);
+      });
+    });
   }
 
   function showError(el, msg) { el.textContent = msg; el.hidden = !msg; }
 
   $('settingsForm').addEventListener('input', function () { settingsDirty = true; });
+  $('settingsForm').addEventListener('change', function () { settingsDirty = true; });
   $('settingsForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var setupMode = !state.settings;
+    var setupMode = !state.settings || (lastPlan && lastPlan.status === 'setup');
     var picked = document.querySelector('input[name="target"]:checked');
     var target = picked ? picked.value : 'platinum';
-    var raw = {
+    var tiers = {};
+    PM.TIERS.forEach(function (t) {
+      tiers[t.key] = {};
+      TIER_FIELDS.forEach(function (f) { tiers[t.key][f.key] = $(tierInputId(t.key, f.key)).value; });
+    });
+    var cur = settingsNow();
+    var s = PM.normalizeSettings({
       cycle: $('cycleSelect').value,
       target: target,
-      tiers: { gold: $('tierGold').value, platinum: $('tierPlatinum').value, diamond: $('tierDiamond').value },
-      daysPerWeek: settingsNow().daysPerWeek,
-      pointsPerTrip: settingsNow().pointsPerTrip,
-      reqs: { rating: $('reqRating').value, acceptance: $('reqAcceptance').value, cancellation: $('reqCancellation').value },
-    };
-    var s = PM.normalizeSettings(raw);
-    var tierInput = { gold: $('tierGold'), platinum: $('tierPlatinum'), diamond: $('tierDiamond') };
-    Object.keys(tierInput).forEach(function (k) { tierInput[k].removeAttribute('aria-invalid'); });
-    if (s.tiers[target] === null) {
-      tierInput[target].setAttribute('aria-invalid', 'true');
-      tierInput[target].focus();
-      showError($('setError'), 'Enter the points ' + PM.tierName(target) + ' needs in your city. Uber Pro in the Driver app lists it.');
+      currentStatus: $('currentStatus').value || null,
+      daysPerWeek: cur.daysPerWeek,
+      pointsPerTrip: cur.pointsPerTrip,
+      tiers: tiers,
+    });
+    document.querySelectorAll('#tierInputs input').forEach(function (i) { i.removeAttribute('aria-invalid'); });
+    if (s.tiers[target].points === null) {
+      var inp = $(tierInputId(target, 'points'));
+      inp.setAttribute('aria-invalid', 'true');
+      inp.focus();
+      showError($('setError'), 'Enter the points ' + PM.tierName(target) + ' needs. It’s in the Points column of the app’s status table.');
       return;
     }
-    var order = PM.TIERS.map(function (t) { return s.tiers[t.key]; }).filter(function (v) { return v !== null; });
+    var order = PM.TIERS.map(function (t) { return s.tiers[t.key].points; }).filter(function (v) { return v !== null; });
     for (var i = 1; i < order.length; i++) {
       if (order[i] <= order[i - 1]) { showError($('setError'), 'Each tier should need more points than the one below it.'); return; }
     }
@@ -1032,20 +1261,23 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     stampPeriodMeta(PM.periodFor(today(), s.cycle).start);
     save('settings');
     if (setupMode && startPts !== '') {
-      state.log.checkins = PM.upsertCheckin(state.log.checkins, { date: today(), points: Number(startPts) });
+      var Pn = PM.plan({ today: today(), settings: s, checkins: state.log.checkins });
+      if (!Pn.latest || Pn.latest.points !== Number(startPts)) {
+        state.log.checkins = PM.upsertCheckin(state.log.checkins, { date: today(), points: Number(startPts) });
+      }
     }
     save('log');
     render();
     if (setupMode) {
       $('settingsDetails').open = false;
-      toast('You’re set. Update your points whenever you check the app.');
+      toast('You’re set. Update your numbers whenever you check the app.');
       window.scrollTo(0, 0);
     } else {
       toast('Settings saved');
     }
   });
 
-  // Remember which tier points applied to a period, so past periods are judged fairly.
+  // Remember which tier requirements applied to a period, so past periods are judged fairly.
   function stampPeriodMeta(start) {
     var s = settingsNow();
     state.log.periodMeta = state.log.periodMeta || {};
@@ -1063,24 +1295,30 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     if (pts.value === '' || !(Number(pts.value) >= 0)) {
       pts.setAttribute('aria-invalid', 'true');
       pts.focus();
-      showError($('ciError'), 'Enter your points for this period. It’s the big number in Uber Pro.');
+      showError($('ciError'), 'Enter your points for this period. It’s the Total this period under Your points.');
       return;
     }
     if (date > today() || date < P.period.start) {
       showError($('ciError'), 'Pick a date in this period, up to today.');
       return;
     }
-    // An empty rate box stores nothing; the requirements card falls back to the last number entered.
+    // An empty box stores nothing; the requirements fall back to the last number entered.
+    var val = function (id) { return $(id).value === '' ? null : Number($(id).value); };
     var c = {
       date: date,
       points: Number(pts.value),
-      rating: $('ciRating').value === '' ? null : Number($('ciRating').value),
-      acceptance: $('ciAcceptance').value === '' ? null : Number($('ciAcceptance').value),
-      cancellation: $('ciCancellation').value === '' ? null : Number($('ciCancellation').value),
+      trips: val('ciTrips'),
+      acceptance: val('ciAcceptance'),
+      cancellation: val('ciCancellation'),
+      rating: val('ciRating'),
+      insights: val('ciInsights'),
     };
+    if (c.trips !== null && !(c.trips >= 0)) { showError($('ciError'), 'Trips should be 0 or more.'); return; }
+    if (c.trips && c.points > c.trips * PM.BONUS_POINTS) { showError($('ciError'), 'That many points needs more trips. Each trip earns at most 3 points.'); return; }
+    if (c.trips !== null && c.points < c.trips) { showError($('ciError'), 'Every trip earns at least 1 point, so points can’t be lower than trips.'); return; }
     if (c.rating !== null && !(c.rating >= 1 && c.rating <= 5)) { showError($('ciError'), 'Star rating should be between 1 and 5.'); return; }
-    var bad = ['acceptance', 'cancellation'].filter(function (k) { var v = c[k]; return v !== null && !(v >= 0 && v <= 100); });
-    if (bad.length) { showError($('ciError'), 'Rates are percentages from 0 to 100.'); return; }
+    var bad = ['acceptance', 'cancellation', 'insights'].filter(function (k) { return c[k] !== null && !(c[k] >= 0 && c[k] <= 100); });
+    if (bad.length) { showError($('ciError'), 'Rates and the Insights score go from 0 to 100.'); return; }
     showError($('ciError'), '');
 
     var prevPoints = null;
@@ -1088,7 +1326,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     state.log.checkins = PM.upsertCheckin(state.log.checkins, c);
     stampPeriodMeta(P.period.start);
     save('log');
-    ['ciPoints', 'ciRating', 'ciAcceptance', 'ciCancellation'].forEach(function (id) { $(id).value = ''; });
+    ['ciPoints', 'ciTrips', 'ciAcceptance', 'ciCancellation', 'ciRating', 'ciInsights'].forEach(function (id) { $(id).value = ''; });
     $('ciDate').value = today();
     render();
     var gain = prevPoints === null ? '' : ' (' + (c.points - prevPoints >= 0 ? '+' : '') + fmt(c.points - prevPoints) + ')';
@@ -1128,7 +1366,7 @@ footer strong { color: var(--ink-2); font-weight: 600; }
   $('dpwPlus').addEventListener('click', function () { changeSetting({ daysPerWeek: settingsNow().daysPerWeek + 1 }); });
   $('pptInput').addEventListener('change', function () {
     var v = Number($('pptInput').value);
-    if (!(v > 0)) { $('pptInput').value = String(settingsNow().pointsPerTrip); return; }
+    if (!(v >= 1 && v <= PM.BONUS_POINTS)) { $('pptInput').value = String(settingsNow().pointsPerTrip); return; }
     changeSetting({ pointsPerTrip: v });
   });
 
@@ -1157,8 +1395,8 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     var actual = [{ d: 0, v: 0 }].concat(P.checkins.map(function (c) { return { d: idx(c.date), v: c.points, date: c.date }; }));
     var last = actual[actual.length - 1];
     var hasProj = !!P.latest && last.d < total;
-    var tierList = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key] !== null; })
-      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key] }; });
+    var tierList = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key].points !== null; })
+      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key].points }; });
     var maxV = Math.max(target, last.v, hasProj ? P.projected : 0, 10);
     var step = niceStep(maxV * 1.12 / 4);
     var yMax = Math.ceil(maxV * 1.12 / step) * step;
@@ -1181,10 +1419,18 @@ footer strong { color: var(--ink-2); font-weight: 600; }
       out.push('<text x="' + f1(x((d0 + d1) / 2)) + '" y="' + (H - 8) + '" text-anchor="middle">' + PM.MONTHS[PM.parseISO(ms).m] + '</text>');
     }
 
+    // Tier lines. A label too close to the one below it moves to the right edge.
+    var lastLabelY = Infinity;
     tierList.forEach(function (t) {
       if (t.v > yMax) return;
-      out.push('<line class="tier ' + t.key + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + f1(y(t.v)) + '" y2="' + f1(y(t.v)) + '"/>');
-      out.push('<text class="lbl' + (t.key === P.target ? ' lbl-strong' : '') + '" x="' + (m.l + 6) + '" y="' + f1(y(t.v) - 6) + '">' + esc(t.name) + ' ' + fmt(t.v) + '</text>');
+      var ty = y(t.v);
+      out.push('<line class="tier ' + t.key + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + f1(ty) + '" y2="' + f1(ty) + '"/>');
+      var nearBase = ty > m.t + ih - 16;
+      var crowded = lastLabelY - ty < 16;
+      var lx = crowded || nearBase ? W - m.r - 4 : m.l + 6;
+      var anchor = crowded || nearBase ? 'end' : 'start';
+      out.push('<text class="lbl' + (t.key === P.target ? ' lbl-strong' : '') + '" x="' + lx + '" y="' + f1(ty - 6) + '" text-anchor="' + anchor + '">' + esc(t.name) + ' ' + fmt(t.v) + '</text>');
+      lastLabelY = ty;
     });
 
     out.push('<line class="even" x1="' + f1(x(0)) + '" y1="' + f1(y(0)) + '" x2="' + f1(x(total)) + '" y2="' + f1(y(target)) + '"/>');
@@ -1318,8 +1564,10 @@ footer strong { color: var(--ink-2); font-weight: 600; }
     }).observe($('chart'));
   }
 
-  // Pick up a new day (and a new period) when the driver comes back to the page.
+  // Pick up a new day (and a new period) when the driver comes back, and keep the
+  // extra-point hours card current while the page stays open.
   document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+  setInterval(function () { if (!document.hidden && lastPlan && !$('bonusCard').hidden) renderBonus(lastPlan); }, 60000);
 
   render();
   initStorage();
