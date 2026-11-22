@@ -1,5 +1,8 @@
 Run your own surge alert server
 
+(New: `uber_pro_tracker/` holds Pro Points Planner, a tracker for your Uber Pro
+points each quarter. See `uber_pro_tracker/README.md`.)
+
 1	Register for UBER API access, and obtain a token
 
 2	Create a GitHub account and fork this project

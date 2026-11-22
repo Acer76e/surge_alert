@@ -1,0 +1,1327 @@
+<title>Pro Points Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Track your Uber Pro points through each quarter and see what you need to drive to hit your tier.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: one phone-first column of quiet instrument cards under a single highway-guide-sign status panel. */
+:root {
+  --bg: #edf1ef;
+  --surface: #fbfcfb;
+  --surface-2: #f2f5f3;
+  --ink: #101714;
+  --ink-2: #46514c;
+  --muted: #727d78;
+  --line: #dde3e0;
+  --edge: #c7d0cb;
+  --accent: #0b6b4e;
+  --accent-hover: #08563f;
+  --accent-ink: #ffffff;
+  --accent-wash: rgba(11, 107, 78, 0.10);
+  --focus: #1d7ae0;
+  --sign: #0b6447;
+  --sign-ink: #ffffff;
+  --sign-ink-2: rgba(255, 255, 255, 0.80);
+  --sign-track: rgba(255, 255, 255, 0.22);
+  --pill-bg: #ffffff;
+  --pill-good: #0a6630;
+  --pill-warn: #8a4c00;
+  --pill-done: #0b4f9e;
+  --good: #0a7a36;
+  --good-bg: rgba(10, 122, 54, 0.11);
+  --warn: #965800;
+  --warn-bg: rgba(214, 138, 0, 0.15);
+  --bad: #b3261e;
+  --bad-bg: rgba(179, 38, 30, 0.09);
+  --gold: #b88908;
+  --platinum: #7a8593;
+  --diamond: #4058d6;
+  --shadow: 0 1px 2px rgba(16, 23, 20, 0.06);
+  --font-display: "Barlow Semi Condensed", "Arial Narrow", "Roboto Condensed", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b110f;
+    --surface: #131b18;
+    --surface-2: #19231f;
+    --ink: #e7eeea;
+    --ink-2: #aebbb5;
+    --muted: #7e8b85;
+    --line: #232f2a;
+    --edge: #34423c;
+    --accent: #36c190;
+    --accent-hover: #55d4a5;
+    --accent-ink: #04140e;
+    --accent-wash: rgba(54, 193, 144, 0.14);
+    --focus: #6aaeff;
+    --sign: #0c5a40;
+    --sign-ink: #f3fbf7;
+    --sign-ink-2: rgba(243, 251, 247, 0.78);
+    --sign-track: rgba(243, 251, 247, 0.20);
+    --good: #45cf7b;
+    --good-bg: rgba(69, 207, 123, 0.13);
+    --warn: #f0b544;
+    --warn-bg: rgba(240, 181, 68, 0.13);
+    --bad: #ff8078;
+    --bad-bg: rgba(255, 128, 120, 0.12);
+    --gold: #e3b443;
+    --platinum: #a9b3c0;
+    --diamond: #8c9dff;
+    --shadow: none;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b110f;
+  --surface: #131b18;
+  --surface-2: #19231f;
+  --ink: #e7eeea;
+  --ink-2: #aebbb5;
+  --muted: #7e8b85;
+  --line: #232f2a;
+  --edge: #34423c;
+  --accent: #36c190;
+  --accent-hover: #55d4a5;
+  --accent-ink: #04140e;
+  --accent-wash: rgba(54, 193, 144, 0.14);
+  --focus: #6aaeff;
+  --sign: #0c5a40;
+  --sign-ink: #f3fbf7;
+  --sign-ink-2: rgba(243, 251, 247, 0.78);
+  --sign-track: rgba(243, 251, 247, 0.20);
+  --good: #45cf7b;
+  --good-bg: rgba(69, 207, 123, 0.13);
+  --warn: #f0b544;
+  --warn-bg: rgba(240, 181, 68, 0.13);
+  --bad: #ff8078;
+  --bad-bg: rgba(255, 128, 120, 0.12);
+  --gold: #e3b443;
+  --platinum: #a9b3c0;
+  --diamond: #8c9dff;
+  --shadow: none;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-block: 20px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- header ---------- */
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-bottom: 16px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand svg { flex: none; }
+.brand h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.01em; line-height: 1.1; }
+.brand p { font-size: 0.82rem; color: var(--muted); }
+.period-chip {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.86rem; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-2);
+  border: 1px solid var(--edge); border-radius: 999px; padding: 4px 12px; background: var(--surface);
+}
+
+main { display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- the sign ---------- */
+.sign { background: var(--sign); color: var(--sign-ink); border-radius: 18px; padding: 6px; }
+.sign-inner { border: 2px solid var(--sign-ink); border-radius: 13px; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+.sign-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.eyebrow { font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; background: var(--pill-bg);
+  border-radius: 999px; padding: 3px 11px 3px 8px; font-weight: 600; font-size: 0.88rem; line-height: 1.3;
+}
+.pill svg { width: 14px; height: 14px; flex: none; }
+.pill.ontrack { color: var(--pill-good); }
+.pill.behind { color: var(--pill-warn); }
+.pill.reached { color: var(--pill-done); }
+.hero-figure { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(3.4rem, 15vw, 4.6rem); line-height: 0.95; letter-spacing: -0.01em; }
+.big-label { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; }
+.hero-line { font-size: 1.02rem; }
+.hero-note { font-size: 0.88rem; color: var(--sign-ink-2); }
+
+.track { margin-top: 6px; }
+.track-bar { position: relative; height: 12px; border-radius: 999px; background: var(--sign-track); }
+.track-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--sign-ink); min-width: 12px; }
+.track-proj { position: absolute; top: -5px; width: 0; height: 22px; border-left: 2px dashed var(--sign-ink); }
+.tick { position: absolute; top: -3px; width: 2px; height: 18px; margin-left: -1px; background: var(--sign-ink); opacity: 0.65; border-radius: 1px; }
+.tick.is-target { opacity: 1; width: 3px; margin-left: -1.5px; }
+.track-labels { position: relative; height: 1.4em; margin-top: 8px; font-size: 0.82rem; color: var(--sign-ink-2); }
+.track-labels span { position: absolute; top: 0; white-space: nowrap; transform: translateX(-50%); }
+.track-labels span.at-end { transform: translateX(-100%); }
+.track-labels span.at-start { transform: none; }
+.track-labels span.is-target { color: var(--sign-ink); font-weight: 600; }
+.track-key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.8rem; color: var(--sign-ink-2); }
+.track-key i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+.key-fill { width: 14px; height: 8px; border-radius: 4px; background: var(--sign-ink); }
+.key-proj { width: 0; height: 12px; border-left: 2px dashed var(--sign-ink); }
+
+/* ---------- cards ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); min-width: 0; }
+.card-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.card-head h2 { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.01em; }
+.card-sub { color: var(--ink-2); font-size: 0.92rem; max-width: 62ch; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.tile { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+.tile-value { font-family: var(--font-display); font-weight: 700; font-size: 1.9rem; line-height: 1.1; }
+.tile-value small { font-size: 0.95rem; font-weight: 600; color: var(--ink-2); margin-left: 4px; }
+.tile-sub { font-size: 0.86rem; color: var(--ink-2); }
+.tile.lead { background: var(--accent-wash); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); }
+.control { display: flex; flex-direction: column; gap: 6px; }
+.control-label { font-size: 0.86rem; font-weight: 500; color: var(--ink-2); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.stepper button { width: 44px; height: 42px; border: 0; background: transparent; font-size: 1.25rem; cursor: pointer; color: var(--ink); }
+.stepper button:hover { background: var(--surface-2); }
+.stepper button:disabled { color: var(--edge); cursor: default; background: transparent; }
+.stepper output { min-width: 3.2em; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+.control input { width: 7.5em; }
+
+.pace { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.pace p { color: var(--ink-2); }
+.pace strong { color: var(--ink); font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 3px 10px; font-size: 0.85rem; font-weight: 600; }
+.chip svg { width: 13px; height: 13px; flex: none; }
+.chip.good { background: var(--good-bg); color: var(--good); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.bad { background: var(--bad-bg); color: var(--bad); }
+.chip.neutral { background: var(--surface-2); color: var(--ink-2); }
+
+/* ---------- forms ---------- */
+.form-row { display: grid; gap: 12px; margin-bottom: 12px; }
+.form-row.two { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.form-row.three { grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); }
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field > span { font-size: 0.86rem; font-weight: 500; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+input[type="number"], input[type="date"], select {
+  width: 100%; min-height: 44px; padding: 8px 11px; border: 1px solid var(--edge); border-radius: 9px;
+  background: var(--surface); font-size: 16px; font-variant-numeric: tabular-nums;
+}
+input::placeholder { color: var(--muted); opacity: 1; }
+input[aria-invalid="true"] { border-color: var(--bad); }
+.field-big input { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; min-height: 52px; }
+fieldset { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+legend { font-family: var(--font-display); font-weight: 600; font-size: 1.02rem; margin-bottom: 8px; padding: 0; }
+.hint { font-size: 0.85rem; color: var(--muted); margin-top: -2px; margin-bottom: 12px; max-width: 64ch; }
+.form-error { color: var(--bad); font-size: 0.9rem; font-weight: 500; margin-bottom: 10px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; padding: 0 20px;
+  border-radius: 10px; border: 1px solid var(--edge); background: var(--surface); font-weight: 600; cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn:disabled { opacity: 0.55; cursor: progress; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.swatch.gold { background: var(--gold); }
+.swatch.platinum { background: var(--platinum); }
+.swatch.diamond { background: var(--diamond); }
+
+.seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; max-width: 440px; border: 1px solid var(--edge); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.seg label { position: relative; cursor: pointer; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 0 8px; font-weight: 600; color: var(--ink-2); }
+.seg label + label span { border-left: 1px solid var(--edge); }
+.seg input:checked + span { background: var(--accent-wash); color: var(--ink); box-shadow: inset 0 -3px 0 var(--accent); }
+.seg input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+details > summary {
+  list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.2rem;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after { content: ""; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); margin-right: 4px; transition: transform 0.15s; }
+details[open] > summary::after { transform: rotate(225deg); }
+details[open] > summary { margin-bottom: 14px; }
+.setup-intro { margin-bottom: 16px; color: var(--ink-2); max-width: 62ch; }
+.storage-note { margin-top: 14px; font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- chart ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.85rem; color: var(--ink-2); margin-bottom: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.lk { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--accent); }
+.lk.proj { border-top-style: dashed; }
+.lk.even { border-top: 2px dotted var(--muted); }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart svg:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 4px; }
+.chart text { fill: var(--muted); font-family: var(--font-body); font-size: 12px; font-variant-numeric: tabular-nums; }
+.chart .grid { stroke: var(--line); stroke-width: 1; }
+.chart .base { stroke: var(--edge); stroke-width: 1; }
+.chart .mline { stroke: var(--line); stroke-width: 1; }
+.chart .even { stroke: var(--muted); stroke-width: 2; stroke-dasharray: 2 5; stroke-linecap: round; fill: none; }
+.chart .area { fill: var(--accent); opacity: 0.10; stroke: none; }
+.chart .actual { stroke: var(--accent); stroke-width: 2; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.chart .proj { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 6 5; fill: none; opacity: 0.85; }
+.chart .dot { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.chart .dot-hollow { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.chart .today { stroke: var(--ink-2); stroke-width: 1; }
+.chart .tier { stroke-width: 1.5; opacity: 0.9; }
+.chart .tier.gold { stroke: var(--gold); }
+.chart .tier.platinum { stroke: var(--platinum); }
+.chart .tier.diamond { stroke: var(--diamond); }
+.chart .lbl-strong { fill: var(--ink); font-weight: 600; font-size: 13px; }
+.chart .lbl { fill: var(--ink-2); }
+.chart .xhair { stroke: var(--ink-2); stroke-width: 1; opacity: 0.6; }
+.tip {
+  position: absolute; top: 8px; z-index: 2; pointer-events: none; min-width: 150px;
+  background: var(--surface); border: 1px solid var(--edge); border-radius: 9px; padding: 8px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14); font-size: 0.84rem;
+}
+.tip-date { color: var(--muted); font-weight: 500; margin-bottom: 4px; }
+.tip-row { display: flex; align-items: center; gap: 8px; }
+.tip-row b { font-variant-numeric: tabular-nums; min-width: 3.2em; }
+.tip-row span { color: var(--ink-2); }
+
+/* ---------- requirements ---------- */
+.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.checks li { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; padding: 11px 0; border-top: 1px solid var(--line); }
+.checks li:first-child { border-top: 0; padding-top: 0; }
+.check-name { font-weight: 600; }
+.check-detail { grid-column: 1; font-size: 0.88rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.checks .chip { grid-row: 1 / span 2; grid-column: 2; }
+
+/* ---------- history ---------- */
+.table-wrap { overflow-x: auto; margin: 0 -4px; }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.93rem; }
+th { text-align: right; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); padding: 0 6px 8px; white-space: nowrap; }
+td { text-align: right; padding: 9px 6px; border-top: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+td.pos { color: var(--good); }
+td .del { border: 1px solid transparent; background: transparent; color: var(--muted); border-radius: 7px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem; }
+td .del:hover { border-color: var(--edge); color: var(--ink); }
+td .del.confirm { color: var(--bad); border-color: var(--bad); }
+.empty { color: var(--muted); font-size: 0.92rem; }
+.past { list-style: none; margin: 0; padding: 0; }
+.past li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.past li:first-child { border-top: 0; padding-top: 0; }
+.past .p-name { font-weight: 600; }
+.past .p-meta { color: var(--ink-2); font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+
+footer { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 0.86rem; color: var(--muted); max-width: 66ch; }
+footer strong { color: var(--ink-2); font-weight: 600; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-weight: 500; font-size: 0.93rem;
+  max-width: calc(100% - 32px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); z-index: 20;
+}
+.toast.error { background: var(--bad); color: #ffffff; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (min-width: 640px) {
+  .sign-inner { padding: 22px 24px 18px; }
+  .card { padding: 20px 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="8" fill="var(--sign)"></rect>
+        <rect x="4" y="4" width="26" height="26" rx="5" fill="none" stroke="var(--sign-ink)" stroke-width="1.6"></rect>
+        <path d="M11 23 L17 10 L23 23 M13.6 18 H20.4" fill="none" stroke="var(--sign-ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <div>
+        <h1>Pro Points Planner</h1>
+        <p>For Uber Pro drivers. Not made by or connected to Uber.</p>
+      </div>
+    </div>
+    <div class="period-chip" id="periodChip"></div>
+  </header>
+
+  <main id="main">
+    <section class="sign" id="hero" style="order: 0" aria-live="polite">
+      <div class="sign-inner">
+        <div class="sign-top">
+          <span class="eyebrow" id="heroEyebrow"></span>
+          <span class="pill" id="heroPill" hidden></span>
+        </div>
+        <div class="hero-figure">
+          <span class="big" id="heroBig"></span>
+          <span class="big-label" id="heroBigLabel"></span>
+        </div>
+        <p class="hero-line" id="heroLine"></p>
+        <p class="hero-note" id="heroNote"></p>
+        <div class="track" id="heroTrack" hidden></div>
+      </div>
+    </section>
+
+    <section class="card" id="checkinCard" style="order: 2" hidden>
+      <div class="card-head">
+        <h2>Update your points</h2>
+        <p class="card-sub">Copy the numbers from Uber Pro in the Driver app. Saving the same day again replaces that day's numbers.</p>
+      </div>
+      <form id="checkinForm" novalidate>
+        <div class="form-row two">
+          <label class="field field-big"><span>Points this period</span>
+            <input id="ciPoints" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" required>
+          </label>
+          <label class="field"><span>As of</span>
+            <input id="ciDate" type="date">
+          </label>
+        </div>
+        <div class="form-row three">
+          <label class="field"><span>Star rating</span>
+            <input id="ciRating" type="number" inputmode="decimal" min="1" max="5" step="0.01" autocomplete="off">
+          </label>
+          <label class="field"><span>Acceptance %</span>
+            <input id="ciAcceptance" type="number" inputmode="decimal" min="0" max="100" step="0.1" autocomplete="off">
+          </label>
+          <label class="field"><span>Cancellation %</span>
+            <input id="ciCancellation" type="number" inputmode="decimal" min="0" max="100" step="0.1" autocomplete="off">
+          </label>
+        </div>
+        <p class="hint">The three rates are optional. Leave a box empty to keep your last number.</p>
+        <p class="form-error" id="ciError" role="alert" hidden></p>
+        <button class="btn primary" type="submit" id="ciSave">Save check-in</button>
+      </form>
+    </section>
+
+    <section class="card" id="planCard" style="order: 3" hidden>
+      <div class="card-head">
+        <h2 id="planTitle">What you need to drive</h2>
+        <p class="card-sub" id="planSub"></p>
+      </div>
+      <div class="tiles" id="planTiles"></div>
+      <div class="controls">
+        <div class="control">
+          <span class="control-label" id="dpwLabel">Days you drive each week</span>
+          <div class="stepper" role="group" aria-labelledby="dpwLabel">
+            <button type="button" id="dpwMinus" aria-label="Fewer days a week">&minus;</button>
+            <output id="dpwValue" aria-live="polite"></output>
+            <button type="button" id="dpwPlus" aria-label="More days a week">+</button>
+          </div>
+        </div>
+        <label class="control"><span class="control-label">Average points per trip</span>
+          <input id="pptInput" type="number" inputmode="decimal" min="0.1" max="50" step="0.1">
+        </label>
+      </div>
+      <div class="pace" id="paceBlock"></div>
+    </section>
+
+    <section class="card" id="chartCard" style="order: 4" hidden>
+      <div class="card-head">
+        <h2>Points this period</h2>
+        <p class="card-sub" id="chartSub"></p>
+      </div>
+      <div class="legend" id="chartLegend">
+        <span><i class="lk"></i>Your points</span>
+        <span id="legendProj"><i class="lk proj"></i>Projected at your pace</span>
+        <span><i class="lk even"></i><span id="legendEven">Even pace</span></span>
+      </div>
+      <div class="chart" id="chart">
+        <svg id="chartSvg" role="img" tabindex="0" aria-describedby="chartSub"></svg>
+        <div class="tip" id="chartTip" hidden></div>
+      </div>
+    </section>
+
+    <section class="card" id="qualityCard" style="order: 5" hidden>
+      <div class="card-head">
+        <h2>Status requirements</h2>
+        <p class="card-sub">Points are only part of it. Uber also checks your rates for Gold and up. Set your city's exact numbers in settings.</p>
+      </div>
+      <ul class="checks" id="qualityList"></ul>
+    </section>
+
+    <section class="card" id="historyCard" style="order: 6" hidden>
+      <div class="card-head">
+        <h2>Check-ins</h2>
+        <p class="card-sub" id="historySub"></p>
+      </div>
+      <div class="table-wrap">
+        <table id="historyTable">
+          <thead><tr><th scope="col">Date</th><th scope="col">Points</th><th scope="col">Change</th><th scope="col">Rating</th><th scope="col">Accept</th><th scope="col">Cancel</th><th scope="col"><span class="sr-only">Delete</span></th></tr></thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+      <p class="empty" id="historyEmpty" hidden>No check-ins yet this period. Add your points above.</p>
+    </section>
+
+    <section class="card" id="pastCard" style="order: 7" hidden>
+      <div class="card-head">
+        <h2>Past periods</h2>
+        <p class="card-sub">Where you finished. Status you earn in one period applies for the next.</p>
+      </div>
+      <ul class="past" id="pastList"></ul>
+    </section>
+
+    <section class="card" id="settingsCard" style="order: 8">
+      <details id="settingsDetails">
+        <summary id="settingsSummary">Tier points and settings</summary>
+        <p class="setup-intro" id="setupIntro" hidden>Open Uber Pro in the Driver app. It shows the points each tier needs in your city and the date this period ends. Enter them once here. You can change them any time.</p>
+        <form id="settingsForm" novalidate>
+          <fieldset>
+            <legend>Tier you're going for</legend>
+            <div class="seg" role="radiogroup" aria-label="Target tier">
+              <label><input type="radio" name="target" value="gold" id="tgGold"><span><i class="swatch gold"></i>Gold</span></label>
+              <label><input type="radio" name="target" value="platinum" id="tgPlatinum"><span><i class="swatch platinum"></i>Platinum</span></label>
+              <label><input type="radio" name="target" value="diamond" id="tgDiamond"><span><i class="swatch diamond"></i>Diamond</span></label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Points each tier needs in your city</legend>
+            <div class="form-row three">
+              <label class="field"><span><i class="swatch gold"></i>Gold</span><input id="tierGold" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
+              <label class="field"><span><i class="swatch platinum"></i>Platinum</span><input id="tierPlatinum" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
+              <label class="field"><span><i class="swatch diamond"></i>Diamond</span><input id="tierDiamond" type="number" inputmode="numeric" min="1" step="1" placeholder="Points"></label>
+            </div>
+            <p class="hint">Only your target tier is required. Add the others to see them on the chart.</p>
+          </fieldset>
+          <div class="form-row two" id="setupPointsRow" hidden>
+            <label class="field field-big"><span>Your points so far this period</span>
+              <input id="setupPoints" type="number" inputmode="numeric" min="0" step="1" placeholder="0">
+            </label>
+          </div>
+          <div class="form-row two">
+            <label class="field"><span>Uber Pro periods start in</span>
+              <select id="cycleSelect"></select>
+            </label>
+          </div>
+          <p class="hint" id="cycleHint"></p>
+          <fieldset>
+            <legend>Rate requirements for your target tier</legend>
+            <div class="form-row three">
+              <label class="field"><span>Min rating</span><input id="reqRating" type="number" inputmode="decimal" min="1" max="5" step="0.01" placeholder="None"></label>
+              <label class="field"><span>Min acceptance %</span><input id="reqAcceptance" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="None"></label>
+              <label class="field"><span>Max cancel %</span><input id="reqCancellation" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="None"></label>
+            </div>
+            <p class="hint">Starts with the 4.85 rating and 4% cancellation limits from Uber's help pages. These vary by city and tier and changed in 2026, so match them to your app. Leave a box empty if it doesn't apply.</p>
+          </fieldset>
+          <p class="form-error" id="setError" role="alert" hidden></p>
+          <button class="btn primary" type="submit" id="setSave">Save settings</button>
+        </form>
+        <p class="storage-note" id="storageNote"></p>
+      </details>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>Where the numbers come from.</strong> Uber doesn't let outside apps read Uber Pro points, so this planner works from what you type in. Open Uber Pro in the Driver app for your points, the date the period ends and what each tier needs. Your rating and rates are on the same screens.</p>
+    <p><strong>How the plan works.</strong> Points needed are split across the days left, counting today, at the number of days you drive each week. Your pace is your points divided by the days so far this period. Points reset to zero when a new period starts.</p>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="pro-math.js"></script>
+<script>
+(function () {
+  'use strict';
+  var PM = window.ProMath;
+  var LS_KEY = 'pro-points-planner:v1';
+  var $ = function (id) { return document.getElementById(id); };
+
+  if (!PM) {
+    $('heroEyebrow').textContent = 'Could not load';
+    $('heroLine').textContent = 'pro-math.js is missing. Keep it in the same folder as this page.';
+    return;
+  }
+
+  /* ---------------- state ---------------- */
+
+  var state = {
+    mode: 'loading',     // 'cloud' | 'local' | 'loading'
+    loaded: false,
+    slow: false,
+    settings: null,      // null until the driver saves settings once
+    log: { checkins: [], periodMeta: {} },
+  };
+  var cloud = null;
+  var writers = {};
+  var settingsDirty = false;
+
+  function clone(v) { return JSON.parse(JSON.stringify(v)); }
+  function today() { return PM.localToday(); }
+  function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+  function fmt1(n) { return (Math.round(n * 10) / 10).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+  function plural(n, one, many) { return fmt(n) + ' ' + (Math.round(n) === 1 ? one : many); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function settingsNow() { return PM.normalizeSettings(state.settings || PM.DEFAULT_SETTINGS); }
+  function cleanLog(raw) {
+    raw = raw && typeof raw === 'object' ? raw : {};
+    var meta = raw.periodMeta && typeof raw.periodMeta === 'object' ? raw.periodMeta : {};
+    return { checkins: PM.sortCheckins(raw.checkins), periodMeta: meta };
+  }
+
+  /* ---------------- storage ---------------- */
+
+  function readLocal() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+  function writeLocal() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({ settings: state.settings, log: state.log }));
+      return true;
+    } catch (e) { return false; }
+  }
+  function useLocal() {
+    var saved = readLocal();
+    state.mode = 'local';
+    if (saved) {
+      if (saved.settings) state.settings = PM.normalizeSettings(saved.settings);
+      state.log = cleanLog(saved.log);
+    }
+    state.loaded = true;
+    render();
+  }
+
+  function docBody(id) { return id === 'settings' ? clone(state.settings) : clone(state.log); }
+  function pending(id) { var w = writers[id]; return !!(w && (w.running || w.dirty)); }
+
+  // One write at a time per document; a burst of changes collapses into one write of the latest state.
+  function save(id) {
+    if (state.mode === 'cloud' && cloud) {
+      var w = writers[id] || (writers[id] = { running: false, dirty: false });
+      w.dirty = true;
+      if (!w.running) pump(id);
+      return;
+    }
+    if (!writeLocal()) toast('This browser blocked saving. Private browsing can do that.', true);
+  }
+  function pump(id) {
+    var w = writers[id];
+    w.running = true;
+    w.dirty = false;
+    cloud.col.doc(id).set(docBody(id)).then(function () {
+      if (w.dirty) return pump(id);
+      w.running = false;
+    }, function (err) {
+      w.running = false;
+      w.dirty = false;
+      saveFailed(err);
+    });
+  }
+  function saveFailed(err) {
+    var code = err && err.code;
+    if (code === 'invalid_argument') toast('You can view this planner but not save to it.', true);
+    else if (code === 'quota_exceeded') toast('Storage is full. Delete old check-ins to save new ones.', true);
+    else toast('Could not save. Check your connection and try again.', true);
+  }
+
+  function applyDocs(docs) {
+    docs.forEach(function (d) {
+      if (pending(d.id)) return; // keep our newer local copy until it is written
+      var body = d.data();
+      if (d.id === 'settings' && body) state.settings = PM.normalizeSettings(body);
+      if (d.id === 'log' && body) state.log = cleanLog(body);
+    });
+  }
+
+  function initStorage() {
+    var c = window.claude;
+    if (!c || typeof c.use !== 'function') { useLocal(); return; }
+    Promise.all([c.use('db'), c.use('user')]).then(function (r) {
+      var db = r[0], user = r[1];
+      if (!db || !user) return null;
+      return user.id().then(function (uid) { return uid ? { db: db, uid: uid } : null; });
+    }).then(function (ctx) {
+      if (!ctx) { useLocal(); return; }
+      state.mode = 'cloud';
+      cloud = { col: ctx.db.collection('data/users/' + ctx.uid) };
+      var timer = setTimeout(function () { if (!state.loaded) { state.slow = true; render(); } }, 10000);
+      cloud.col.onSnapshot(function (snap) {
+        if (!snap.metadata.fromCache) { clearTimeout(timer); state.slow = false; }
+        applyDocs(snap.docs);
+        if (!snap.metadata.fromCache || !snap.empty) state.loaded = true;
+        render();
+      }, function (err) {
+        clearTimeout(timer);
+        state.loaded = true;
+        state.slow = false;
+        toast(err && err.code === 'revoked' ? 'Saving is no longer available on this page.' : 'Lost the connection to your saved data. Reload to try again.', true);
+        render();
+      });
+    }).catch(function () { useLocal(); });
+  }
+
+  /* ---------------- toast ---------------- */
+
+  var toastTimer = null;
+  function toast(msg, isError) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, isError ? 6000 : 3000);
+  }
+
+  /* ---------------- icons ---------------- */
+
+  var ICON = {
+    check: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    alert: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2L14.6 13.6H1.4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 6.6v3.2M8 11.9v.1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+    star: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.6l1.9 4.1 4.5.5-3.4 3 1 4.4L8 11.3 4 13.6l1-4.4-3.4-3 4.5-.5Z" fill="currentColor"/></svg>',
+    minus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8h9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  };
+
+  /* ---------------- render ---------------- */
+
+  var lastPlan = null;
+
+  function render() {
+    var s = settingsNow();
+    var t = today();
+    var P = PM.plan({ today: t, settings: s, checkins: state.log.checkins });
+    lastPlan = P;
+    var setupMode = !state.settings;
+
+    $('periodChip').textContent = P.period.label + ' · ' + PM.fmtDate(P.period.start) + ' to ' + PM.fmtDate(P.period.end);
+
+    renderHero(P, setupMode);
+    renderSettingsCard(P, setupMode);
+
+    ['checkinCard', 'planCard', 'chartCard', 'qualityCard', 'historyCard'].forEach(function (id) { $(id).hidden = setupMode; });
+    if (setupMode) { $('pastCard').hidden = true; return; }
+
+    renderCheckinForm(P);
+    renderPlan(P);
+    renderChart(P);
+    renderQuality(P);
+    renderHistory(P);
+    renderPast(P);
+  }
+
+  function renderHero(P, setupMode) {
+    var pill = $('heroPill');
+    var track = $('heroTrack');
+    var endDate = PM.fmtDate(P.period.end);
+    var nextRange = PM.fmtDate(P.period.nextStart) + ' to ' + PM.fmtDate(P.period.nextEnd, true);
+    pill.hidden = true;
+    track.hidden = true;
+
+    if (setupMode || P.status === 'setup') {
+      $('heroEyebrow').textContent = P.period.label + ' ends ' + endDate;
+      $('heroBig').textContent = fmt(P.daysLeft);
+      $('heroBigLabel').textContent = P.daysLeft === 1 ? 'day left' : 'days left';
+      $('heroLine').textContent = state.loaded
+        ? 'Set your target tier below to see how many points you need each day.'
+        : (state.slow ? 'Still reaching your saved data. You can set up below in the meantime.' : 'Loading your saved data…');
+      $('heroNote').textContent = 'Status you earn by ' + endDate + ' applies ' + nextRange + '.';
+      return;
+    }
+
+    if (P.status === 'nodata') {
+      $('heroEyebrow').textContent = P.targetName + ' by ' + endDate;
+      $('heroBig').textContent = fmt(P.targetPoints);
+      $('heroBigLabel').textContent = 'points for ' + P.targetName;
+      $('heroLine').textContent = plural(P.daysLeft, 'day', 'days') + ' left. Add your current points to see your plan.';
+      $('heroNote').textContent = 'New period, so points start from zero. Status you earn by ' + endDate + ' applies ' + nextRange + '.';
+      renderTrack(P);
+      return;
+    }
+
+    var asOf = P.latest.date === P.today ? '' : ' Points as of ' + PM.fmtDate(P.latest.date) + '.';
+    pill.hidden = false;
+    if (P.status === 'reached') {
+      pill.className = 'pill reached';
+      pill.innerHTML = ICON.star + '<span>' + esc(P.targetName) + ' reached</span>';
+      $('heroEyebrow').textContent = P.period.label + ' · ' + plural(P.daysLeft, 'day', 'days') + ' left';
+      $('heroBig').textContent = fmt(P.points);
+      $('heroBigLabel').textContent = 'points';
+      $('heroLine').textContent = P.stretch
+        ? fmt(P.stretch.needed) + ' more for ' + P.stretch.tierName + ', about ' + fmt(P.stretch.perDrivingDay) + ' a driving day.'
+        : 'You have the points. Keep your rates in range to hold it.';
+      $('heroNote').textContent = 'Keep your rates in range and ' + P.targetName + ' applies ' + nextRange + '.' + asOf;
+    } else {
+      var ok = P.status === 'ontrack';
+      pill.className = 'pill ' + P.status;
+      pill.innerHTML = (ok ? ICON.check : ICON.alert) + '<span>' + (ok ? 'On track' : 'Behind pace') + '</span>';
+      $('heroEyebrow').textContent = P.targetName + ' by ' + endDate;
+      $('heroBig').textContent = fmt(P.needed);
+      $('heroBigLabel').textContent = P.needed === 1 ? 'point to go' : 'points to go';
+      $('heroLine').textContent = plural(P.daysLeft, 'day', 'days') + ' left · ' + fmt(P.perDrivingDay) + ' points a driving day';
+      $('heroNote').textContent = 'You have ' + fmt(P.points) + ' of ' + fmt(P.targetPoints) + '. Status you earn by ' + endDate + ' applies ' + nextRange + '.' + asOf;
+    }
+    renderTrack(P);
+  }
+
+  function renderTrack(P) {
+    var track = $('heroTrack');
+    var tiers = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key] !== null; })
+      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key] }; });
+    if (!tiers.length) return;
+    var showProj = P.latest && P.status !== 'reached' && P.projected !== P.points;
+    var top = Math.max.apply(null, tiers.map(function (t) { return t.v; }).concat([P.points, showProj ? P.projected : 0]));
+    var scale = top * 1.04 || 1;
+    var pct = function (v) { return Math.min(100, Math.max(0, v / scale * 100)); };
+
+    var bar = '<div class="track-bar"><div class="track-fill" style="width:' + pct(P.points).toFixed(2) + '%"></div>';
+    tiers.forEach(function (t) {
+      bar += '<span class="tick' + (t.key === P.target ? ' is-target' : '') + '" style="left:' + pct(t.v).toFixed(2) + '%"></span>';
+    });
+    if (showProj) bar += '<span class="track-proj" style="left:' + pct(P.projected).toFixed(2) + '%"></span>';
+    bar += '</div>';
+
+    // Keep tier labels from overlapping: estimate each label's width, keep the
+    // target's label, then add the others only where they fit.
+    track.hidden = false;
+    var bw = track.clientWidth || 300;
+    var items = tiers.map(function (t) {
+      var text = t.name + ' ' + fmt(t.v);
+      var w = text.length * 7;
+      var pos = pct(t.v), px = pos / 100 * bw;
+      var align = px + w / 2 > bw ? 'end' : px - w / 2 < 0 ? 'start' : 'mid';
+      var left = align === 'end' ? px - w : align === 'start' ? px : px - w / 2;
+      return { t: t, text: text, pos: pos, align: align, left: left, right: left + w };
+    });
+    var kept = items.filter(function (i) { return i.t.key === P.target; });
+    items.forEach(function (i) {
+      if (i.t.key === P.target) return;
+      var clear = kept.every(function (k) { return i.right + 10 <= k.left || i.left >= k.right + 10; });
+      if (clear) kept.push(i);
+    });
+    var labels = '<div class="track-labels">';
+    kept.forEach(function (k) {
+      var cls = (k.t.key === P.target ? 'is-target' : '') + (k.align === 'end' ? ' at-end' : k.align === 'start' ? ' at-start' : '');
+      labels += '<span class="' + cls + '" style="left:' + k.pos.toFixed(2) + '%">' + esc(k.text) + '</span>';
+    });
+    labels += '</div>';
+    var key = '<div class="track-key"><span><i class="key-fill"></i>Your points</span>' +
+      (showProj ? '<span><i class="key-proj"></i>Where your pace lands</span>' : '') + '</div>';
+    track.innerHTML = bar + labels + key;
+    track.setAttribute('role', 'img');
+    track.setAttribute('aria-label', fmt(P.points) + ' points. ' + tiers.map(function (t) { return t.name + ' at ' + fmt(t.v); }).join(', ') + '.' +
+      (showProj ? ' Projected finish ' + fmt(P.projected) + '.' : ''));
+    track.hidden = false;
+  }
+
+  function tile(label, value, unit, sub, lead) {
+    return '<div class="tile' + (lead ? ' lead' : '') + '"><span class="tile-label">' + esc(label) + '</span>' +
+      '<span class="tile-value">' + esc(value) + (unit ? '<small>' + esc(unit) + '</small>' : '') + '</span>' +
+      '<span class="tile-sub">' + esc(sub) + '</span></div>';
+  }
+
+  function renderPlan(P) {
+    var s = P.settings;
+    var R = P.status === 'reached' ? P.stretch : P;
+    var tripWord = function (n) { return Math.round(n) === 1 ? 'trip' : 'trips'; };
+
+    if (P.status === 'reached') {
+      $('planTitle').textContent = P.stretch ? 'Going for ' + P.stretch.tierName : 'What you need to drive';
+      $('planSub').textContent = P.stretch
+        ? 'You have ' + P.targetName + '. Here is what ' + P.stretch.tierName + ' would take by ' + PM.fmtDate(P.period.end) + '.'
+        : 'You have the points for ' + P.targetName + '. Nothing more to drive for status this period.';
+    } else {
+      $('planTitle').textContent = 'What you need to drive';
+      $('planSub').textContent = 'To reach ' + fmt(P.targetPoints) + ' for ' + P.targetName + ', from today through ' + PM.fmtDate(P.period.end) + '.';
+    }
+
+    if (R) {
+      $('planTiles').innerHTML =
+        tile('Each driving day', fmt(R.perDrivingDay), 'pts', 'about ' + fmt(R.tripsPerDrivingDay) + ' ' + tripWord(R.tripsPerDrivingDay), true) +
+        tile('Each week', fmt(R.perWeek), 'pts', 'about ' + fmt(R.tripsPerWeek) + ' ' + tripWord(R.tripsPerWeek)) +
+        tile('Driving days left', fmt(R.drivingDaysLeft), '', 'of ' + plural(P.daysLeft, 'day', 'days') + ' at ' + s.daysPerWeek + ' a week') +
+        tile('Trips to go', fmt(R.tripsTotal), '', 'at ' + fmt1(s.pointsPerTrip) + ' pts a trip');
+    } else {
+      $('planTiles').innerHTML = '';
+    }
+
+    $('dpwValue').textContent = s.daysPerWeek + (s.daysPerWeek === 1 ? ' day' : ' days');
+    $('dpwMinus').disabled = s.daysPerWeek <= 1;
+    $('dpwPlus').disabled = s.daysPerWeek >= 7;
+    if (document.activeElement !== $('pptInput')) $('pptInput').value = String(s.pointsPerTrip);
+
+    var html = '';
+    if (!P.latest) {
+      html = '<p>Add a check-in to see your pace.</p>';
+    } else if (P.status === 'reached') {
+      html = '<p>You reached ' + esc(P.targetName) + ' on <strong>' + esc(PM.fmtDate(P.reachDate)) + '</strong>, averaging <strong>' + fmt1(P.pacePerDay) + ' points a day</strong>.' +
+        (P.stretch ? ' At that pace you finish near <strong>' + fmt(P.projected) + '</strong>' + (P.projected >= P.stretch.goal ? ', enough for ' + esc(P.stretch.tierName) + '.' : '.') : '') + '</p>';
+    } else {
+      html = '<p>So far you average <strong>' + fmt1(P.pacePerDay) + ' points a day</strong>. From here you need <strong>' + fmt1(P.perCalendarDay) + ' a day</strong>, counting every day left.</p>';
+      if (P.status === 'ontrack') {
+        html += '<p>At this pace you reach ' + esc(P.targetName) + ' around <strong>' + esc(PM.fmtDate(P.reachDate)) + '</strong> and finish near <strong>' + fmt(P.projected) + '</strong>.</p>';
+      } else {
+        html += '<p>At this pace you finish near <strong>' + fmt(P.projected) + '</strong>' +
+          (P.projectedTier !== 'blue' ? ' (' + esc(PM.tierName(P.projectedTier)) + ')' : '') +
+          ', <strong>' + fmt(P.targetPoints - P.projected) + ' short</strong> of ' + esc(P.targetName) + '.</p>';
+      }
+      var chips = '';
+      if (P.vsEven >= 0) chips += '<span class="chip good">' + ICON.check + fmt(P.vsEven) + ' ahead of an even pace</span>';
+      else chips += '<span class="chip warn">' + ICON.alert + fmt(-P.vsEven) + ' behind an even pace</span>';
+      if (P.early) chips += '<span class="chip neutral">Early estimate: ' + plural(P.elapsedAtLatest, 'day', 'days') + ' of data</span>';
+      html += '<div class="chips">' + chips + '</div>';
+    }
+    $('paceBlock').innerHTML = html;
+  }
+
+  function renderCheckinForm(P) {
+    var d = $('ciDate');
+    d.min = P.period.start;
+    d.max = P.today;
+    if (!d.value || d.value < P.period.start || d.value > P.today) d.value = P.today;
+    var last = P.latest;
+    $('ciPoints').placeholder = last ? 'Last: ' + fmt(last.points) : 'From Uber Pro';
+    var q = {};
+    P.quality.forEach(function (x) { q[x.key] = x.value; });
+    $('ciRating').placeholder = q.rating !== null ? String(q.rating) : '4.92';
+    $('ciAcceptance').placeholder = q.acceptance !== null ? String(q.acceptance) : 'Optional';
+    $('ciCancellation').placeholder = q.cancellation !== null ? String(q.cancellation) : 'Optional';
+  }
+
+  function renderQuality(P) {
+    var rows = P.quality.map(function (q) {
+      var val = q.value === null ? 'Not entered' : (q.key === 'rating' ? q.value.toFixed(2) : fmt1(q.value) + '%');
+      var reqTxt = q.req === null ? '' : (q.key === 'rating' ? q.req.toFixed(2) : fmt1(q.req) + '%');
+      var req = q.req === null ? 'no requirement set' : 'needs ' + reqTxt + (q.dir === 'min' ? ' or higher' : ' or lower');
+      var chip;
+      if (q.ok === true) chip = '<span class="chip good">' + ICON.check + 'Meets it</span>';
+      else if (q.ok === false) chip = '<span class="chip bad">' + ICON.alert + (q.dir === 'min' ? 'Too low' : 'Too high') + '</span>';
+      else chip = '<span class="chip neutral">' + ICON.minus + (q.req === null ? 'No limit' : 'Add yours') + '</span>';
+      return '<li><span class="check-name">' + esc(q.label) + '</span>' + chip +
+        '<span class="check-detail">' + esc(val) + ' · ' + esc(P.targetName) + ' ' + esc(req) + '</span></li>';
+    });
+    $('qualityList').innerHTML = rows.join('');
+  }
+
+  var pendingDelete = null;
+  function renderHistory(P) {
+    var list = P.checkins;
+    $('historyEmpty').hidden = list.length > 0;
+    $('historyTable').hidden = list.length === 0;
+    $('historySub').textContent = list.length
+      ? plural(list.length, 'check-in', 'check-ins') + ' in ' + P.period.label + '. This table is the data behind the chart.'
+      : '';
+    var rows = [];
+    for (var i = list.length - 1; i >= 0; i--) {
+      var c = list[i];
+      var prev = i > 0 ? list[i - 1].points : null;
+      var diff = prev === null ? null : c.points - prev;
+      var confirm = pendingDelete === c.date;
+      rows.push('<tr><td>' + esc(PM.fmtDate(c.date)) + '</td><td><b>' + fmt(c.points) + '</b></td>' +
+        '<td class="' + (diff > 0 ? 'pos' : '') + '">' + (diff === null ? '' : (diff > 0 ? '+' : '') + fmt(diff)) + '</td>' +
+        '<td>' + (c.rating === null ? '' : c.rating.toFixed(2)) + '</td>' +
+        '<td>' + (c.acceptance === null ? '' : fmt1(c.acceptance) + '%') + '</td>' +
+        '<td>' + (c.cancellation === null ? '' : fmt1(c.cancellation) + '%') + '</td>' +
+        '<td><button type="button" class="del' + (confirm ? ' confirm' : '') + '" data-date="' + esc(c.date) + '">' + (confirm ? 'Tap to delete' : 'Delete') + '</button></td></tr>');
+    }
+    $('historyBody').innerHTML = rows.join('');
+  }
+
+  function renderPast(P) {
+    var past = PM.pastPeriods(state.log.checkins, P.settings.cycle, P.today, state.log.periodMeta, P.settings);
+    $('pastCard').hidden = past.length === 0;
+    $('pastList').innerHTML = past.map(function (p) {
+      var chip = p.hitTarget === true
+        ? '<span class="chip good">' + ICON.check + esc(p.targetName) + ' reached</span>'
+        : p.hitTarget === false
+          ? '<span class="chip warn">' + ICON.alert + 'Missed ' + esc(p.targetName) + '</span>'
+          : '';
+      return '<li><div><div class="p-name">' + esc(p.period.label) + '</div><div class="p-meta">' + fmt(p.finalPoints) + ' points · finished ' +
+        esc(PM.tierName(p.tier)) + '</div></div>' + chip + '</li>';
+    }).join('');
+  }
+
+  /* ---------------- settings card ---------------- */
+
+  function renderSettingsCard(P, setupMode) {
+    var card = $('settingsCard');
+    var det = $('settingsDetails');
+    card.style.order = setupMode ? 1 : 8;
+    // A returning driver's settings may still be on the way: don't flash the setup form at them.
+    card.hidden = setupMode && !state.loaded && !state.slow;
+    $('setupIntro').hidden = !setupMode;
+    $('setupPointsRow').hidden = !setupMode;
+    $('settingsSummary').textContent = setupMode ? 'Set up your tracker' : 'Tier points and settings';
+    if (setupMode) det.open = true;
+    var btn = $('setSave');
+    btn.textContent = setupMode ? 'Start tracking' : 'Save settings';
+
+    var note = state.mode === 'cloud'
+      ? 'Saved to your Claude account, private to you. It follows you to any device where you open this page signed in.'
+      : state.mode === 'local'
+        ? 'Saved in this browser only. Sign in to claude.ai and open the shared link to keep it across devices.'
+        : '';
+    $('storageNote').textContent = note;
+    $('cycleHint').textContent = 'This period: ' + PM.fmtDate(P.period.start, true) + ' to ' + PM.fmtDate(P.period.end, true) +
+      '. If that doesn’t match the end date in your app, pick another option.';
+    if (!settingsDirty) fillSettingsForm(settingsNow());
+  }
+
+  function fillSettingsForm(s) {
+    var sel = $('cycleSelect');
+    if (!sel.options.length) {
+      PM.CYCLES.forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = String(c.value);
+        o.textContent = c.label + (c.value === 0 ? ' (calendar quarters)' : '');
+        sel.appendChild(o);
+      });
+    }
+    sel.value = String(s.cycle);
+    document.querySelectorAll('input[name="target"]').forEach(function (r) { r.checked = r.value === s.target; });
+    $('tierGold').value = s.tiers.gold === null ? '' : s.tiers.gold;
+    $('tierPlatinum').value = s.tiers.platinum === null ? '' : s.tiers.platinum;
+    $('tierDiamond').value = s.tiers.diamond === null ? '' : s.tiers.diamond;
+    $('reqRating').value = s.reqs.rating === null ? '' : s.reqs.rating;
+    $('reqAcceptance').value = s.reqs.acceptance === null ? '' : s.reqs.acceptance;
+    $('reqCancellation').value = s.reqs.cancellation === null ? '' : s.reqs.cancellation;
+  }
+
+  function showError(el, msg) { el.textContent = msg; el.hidden = !msg; }
+
+  $('settingsForm').addEventListener('input', function () { settingsDirty = true; });
+  $('settingsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var setupMode = !state.settings;
+    var picked = document.querySelector('input[name="target"]:checked');
+    var target = picked ? picked.value : 'platinum';
+    var raw = {
+      cycle: $('cycleSelect').value,
+      target: target,
+      tiers: { gold: $('tierGold').value, platinum: $('tierPlatinum').value, diamond: $('tierDiamond').value },
+      daysPerWeek: settingsNow().daysPerWeek,
+      pointsPerTrip: settingsNow().pointsPerTrip,
+      reqs: { rating: $('reqRating').value, acceptance: $('reqAcceptance').value, cancellation: $('reqCancellation').value },
+    };
+    var s = PM.normalizeSettings(raw);
+    var tierInput = { gold: $('tierGold'), platinum: $('tierPlatinum'), diamond: $('tierDiamond') };
+    Object.keys(tierInput).forEach(function (k) { tierInput[k].removeAttribute('aria-invalid'); });
+    if (s.tiers[target] === null) {
+      tierInput[target].setAttribute('aria-invalid', 'true');
+      tierInput[target].focus();
+      showError($('setError'), 'Enter the points ' + PM.tierName(target) + ' needs in your city. Uber Pro in the Driver app lists it.');
+      return;
+    }
+    var order = PM.TIERS.map(function (t) { return s.tiers[t.key]; }).filter(function (v) { return v !== null; });
+    for (var i = 1; i < order.length; i++) {
+      if (order[i] <= order[i - 1]) { showError($('setError'), 'Each tier should need more points than the one below it.'); return; }
+    }
+    var startPts = $('setupPoints').value;
+    if (setupMode && startPts !== '' && !(Number(startPts) >= 0)) {
+      $('setupPoints').setAttribute('aria-invalid', 'true');
+      showError($('setError'), 'Points so far should be 0 or more.');
+      return;
+    }
+    $('setupPoints').removeAttribute('aria-invalid');
+    showError($('setError'), '');
+
+    state.settings = s;
+    settingsDirty = false;
+    stampPeriodMeta(PM.periodFor(today(), s.cycle).start);
+    save('settings');
+    if (setupMode && startPts !== '') {
+      state.log.checkins = PM.upsertCheckin(state.log.checkins, { date: today(), points: Number(startPts) });
+    }
+    save('log');
+    render();
+    if (setupMode) {
+      $('settingsDetails').open = false;
+      toast('You’re set. Update your points whenever you check the app.');
+      window.scrollTo(0, 0);
+    } else {
+      toast('Settings saved');
+    }
+  });
+
+  // Remember which tier points applied to a period, so past periods are judged fairly.
+  function stampPeriodMeta(start) {
+    var s = settingsNow();
+    state.log.periodMeta = state.log.periodMeta || {};
+    state.log.periodMeta[start] = { tiers: clone(s.tiers), target: s.target };
+  }
+
+  /* ---------------- check-in form ---------------- */
+
+  $('checkinForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pts = $('ciPoints');
+    var date = $('ciDate').value || today();
+    var P = lastPlan;
+    pts.removeAttribute('aria-invalid');
+    if (pts.value === '' || !(Number(pts.value) >= 0)) {
+      pts.setAttribute('aria-invalid', 'true');
+      pts.focus();
+      showError($('ciError'), 'Enter your points for this period. It’s the big number in Uber Pro.');
+      return;
+    }
+    if (date > today() || date < P.period.start) {
+      showError($('ciError'), 'Pick a date in this period, up to today.');
+      return;
+    }
+    // An empty rate box stores nothing; the requirements card falls back to the last number entered.
+    var c = {
+      date: date,
+      points: Number(pts.value),
+      rating: $('ciRating').value === '' ? null : Number($('ciRating').value),
+      acceptance: $('ciAcceptance').value === '' ? null : Number($('ciAcceptance').value),
+      cancellation: $('ciCancellation').value === '' ? null : Number($('ciCancellation').value),
+    };
+    if (c.rating !== null && !(c.rating >= 1 && c.rating <= 5)) { showError($('ciError'), 'Star rating should be between 1 and 5.'); return; }
+    var bad = ['acceptance', 'cancellation'].filter(function (k) { var v = c[k]; return v !== null && !(v >= 0 && v <= 100); });
+    if (bad.length) { showError($('ciError'), 'Rates are percentages from 0 to 100.'); return; }
+    showError($('ciError'), '');
+
+    var prevPoints = null;
+    state.log.checkins.forEach(function (x) { if (x.date < date && x.date >= P.period.start) prevPoints = x.points; });
+    state.log.checkins = PM.upsertCheckin(state.log.checkins, c);
+    stampPeriodMeta(P.period.start);
+    save('log');
+    ['ciPoints', 'ciRating', 'ciAcceptance', 'ciCancellation'].forEach(function (id) { $(id).value = ''; });
+    $('ciDate').value = today();
+    render();
+    var gain = prevPoints === null ? '' : ' (' + (c.points - prevPoints >= 0 ? '+' : '') + fmt(c.points - prevPoints) + ')';
+    toast('Saved ' + fmt(c.points) + ' points for ' + PM.fmtDate(date) + gain);
+  });
+
+  $('historyBody').addEventListener('click', function (e) {
+    var b = e.target.closest('button.del');
+    if (!b) return;
+    var date = b.getAttribute('data-date');
+    if (pendingDelete !== date) {
+      pendingDelete = date;
+      render();
+      setTimeout(function () { if (pendingDelete === date) { pendingDelete = null; render(); } }, 4000);
+      return;
+    }
+    pendingDelete = null;
+    state.log.checkins = PM.removeCheckin(state.log.checkins, date);
+    save('log');
+    render();
+    toast('Deleted the check-in for ' + PM.fmtDate(date));
+  });
+
+  /* ---------------- plan controls ---------------- */
+
+  var settingsSaveTimer = null;
+  function changeSetting(patch) {
+    if (!state.settings) return;
+    var s = settingsNow();
+    Object.keys(patch).forEach(function (k) { s[k] = patch[k]; });
+    state.settings = PM.normalizeSettings(s);
+    render();
+    clearTimeout(settingsSaveTimer);
+    settingsSaveTimer = setTimeout(function () { save('settings'); }, 700);
+  }
+  $('dpwMinus').addEventListener('click', function () { changeSetting({ daysPerWeek: settingsNow().daysPerWeek - 1 }); });
+  $('dpwPlus').addEventListener('click', function () { changeSetting({ daysPerWeek: settingsNow().daysPerWeek + 1 }); });
+  $('pptInput').addEventListener('change', function () {
+    var v = Number($('pptInput').value);
+    if (!(v > 0)) { $('pptInput').value = String(settingsNow().pointsPerTrip); return; }
+    changeSetting({ pointsPerTrip: v });
+  });
+
+  /* ---------------- chart ---------------- */
+
+  var chartCtx = null;
+
+  function niceStep(raw) {
+    var p = Math.pow(10, Math.floor(Math.log10(raw)));
+    var f = raw / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+  }
+
+  function renderChart(P) {
+    var host = $('chart');
+    var svg = $('chartSvg');
+    var W = Math.max(280, Math.round(host.clientWidth || 640));
+    var H = W < 520 ? 240 : 290;
+    var m = { l: 44, r: 14, t: 22, b: 28 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var total = P.daysTotal;
+    var t0 = PM.dayNumber(P.period.start);
+    var idx = function (iso) { return PM.dayNumber(iso) - t0 + 1; };
+    var target = P.targetPoints;
+
+    var actual = [{ d: 0, v: 0 }].concat(P.checkins.map(function (c) { return { d: idx(c.date), v: c.points, date: c.date }; }));
+    var last = actual[actual.length - 1];
+    var hasProj = !!P.latest && last.d < total;
+    var tierList = PM.TIERS.filter(function (t) { return P.settings.tiers[t.key] !== null; })
+      .map(function (t) { return { key: t.key, name: t.name, v: P.settings.tiers[t.key] }; });
+    var maxV = Math.max(target, last.v, hasProj ? P.projected : 0, 10);
+    var step = niceStep(maxV * 1.12 / 4);
+    var yMax = Math.ceil(maxV * 1.12 / step) * step;
+    var x = function (d) { return m.l + d / total * iw; };
+    var y = function (v) { return m.t + ih - v / yMax * ih; };
+    var f1 = function (n) { return n.toFixed(1); };
+    var out = [];
+
+    for (var v = 0; v <= yMax + 1e-9; v += step) {
+      out.push('<line class="' + (v === 0 ? 'base' : 'grid') + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + f1(y(v)) + '" y2="' + f1(y(v)) + '"/>');
+      out.push('<text x="' + (m.l - 8) + '" y="' + f1(y(v)) + '" dy="0.32em" text-anchor="end">' + (v >= 10000 ? fmt(v / 1000) + 'K' : fmt(v)) + '</text>');
+    }
+
+    // months: hairline at each month boundary, name centered in its span
+    var ps = PM.parseISO(P.period.start);
+    for (var k = 0; k < 3; k++) {
+      var ms = PM.toISO(ps.y, ps.m + k, 1), me = PM.toISO(ps.y, ps.m + k + 1, 0);
+      var d0 = idx(ms) - 1, d1 = idx(me);
+      if (d0 > 0) out.push('<line class="mline" x1="' + f1(x(d0)) + '" x2="' + f1(x(d0)) + '" y1="' + m.t + '" y2="' + (m.t + ih) + '"/>');
+      out.push('<text x="' + f1(x((d0 + d1) / 2)) + '" y="' + (H - 8) + '" text-anchor="middle">' + PM.MONTHS[PM.parseISO(ms).m] + '</text>');
+    }
+
+    tierList.forEach(function (t) {
+      if (t.v > yMax) return;
+      out.push('<line class="tier ' + t.key + '" x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + f1(y(t.v)) + '" y2="' + f1(y(t.v)) + '"/>');
+      out.push('<text class="lbl' + (t.key === P.target ? ' lbl-strong' : '') + '" x="' + (m.l + 6) + '" y="' + f1(y(t.v) - 6) + '">' + esc(t.name) + ' ' + fmt(t.v) + '</text>');
+    });
+
+    out.push('<line class="even" x1="' + f1(x(0)) + '" y1="' + f1(y(0)) + '" x2="' + f1(x(total)) + '" y2="' + f1(y(target)) + '"/>');
+
+    var path = actual.map(function (p, i) { return (i ? 'L' : 'M') + f1(x(p.d)) + ',' + f1(y(p.v)); }).join('');
+    if (actual.length > 1) {
+      out.push('<path class="area" d="' + path + 'L' + f1(x(last.d)) + ',' + f1(y(0)) + 'L' + f1(x(0)) + ',' + f1(y(0)) + 'Z"/>');
+      out.push('<path class="actual" d="' + path + '"/>');
+    }
+    if (hasProj) {
+      out.push('<line class="proj" x1="' + f1(x(last.d)) + '" y1="' + f1(y(last.v)) + '" x2="' + f1(x(total)) + '" y2="' + f1(y(P.projected)) + '"/>');
+      out.push('<circle class="dot-hollow" cx="' + f1(x(total)) + '" cy="' + f1(y(P.projected)) + '" r="4"/>');
+      out.push('<text class="lbl" x="' + f1(x(total) - 2) + '" y="' + f1(y(P.projected) - 10) + '" text-anchor="end">' + fmt(P.projected) + ' projected</text>');
+    }
+
+    var td = idx(P.today);
+    out.push('<line class="today" x1="' + f1(x(td)) + '" x2="' + f1(x(td)) + '" y1="' + (m.t - 4) + '" y2="' + (m.t + ih) + '"/>');
+    out.push('<text x="' + f1(x(td)) + '" y="' + (m.t - 8) + '" text-anchor="' + (x(td) > W - 40 ? 'end' : 'middle') + '">Today</text>');
+
+    if (actual.length <= 32) {
+      actual.slice(1, -1).forEach(function (p) { out.push('<circle class="dot" cx="' + f1(x(p.d)) + '" cy="' + f1(y(p.v)) + '" r="3.5"/>'); });
+    }
+    if (P.latest) {
+      out.push('<circle class="dot" cx="' + f1(x(last.d)) + '" cy="' + f1(y(last.v)) + '" r="5"/>');
+      var lx = x(last.d), anchor = lx < m.l + 40 ? 'start' : 'end';
+      out.push('<text class="lbl-strong" x="' + f1(lx + (anchor === 'start' ? 8 : -8)) + '" y="' + f1(y(last.v) - 9) + '" text-anchor="' + anchor + '">' + fmt(last.v) + '</text>');
+    }
+
+    out.push('<line class="xhair" id="xhair" x1="0" x2="0" y1="' + m.t + '" y2="' + (m.t + ih) + '" visibility="hidden"/>');
+    out.push('<rect x="' + m.l + '" y="' + m.t + '" width="' + iw + '" height="' + ih + '" fill="transparent"/>');
+
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('width', W);
+    svg.setAttribute('height', H);
+    svg.innerHTML = out.join('');
+    svg.setAttribute('aria-label', 'Line chart of your points this period. ' + fmt(P.points) + ' points now' +
+      (hasProj ? ', projected ' + fmt(P.projected) + ' by ' + PM.fmtDate(P.period.end) : '') + '. ' + P.targetName + ' needs ' + fmt(target) + '.');
+
+    $('legendProj').hidden = !hasProj;
+    $('legendEven').textContent = 'Even pace to ' + P.targetName;
+    $('chartSub').textContent = 'Your check-ins against a steady line from zero to ' + fmt(target) + ' on ' + PM.fmtDate(P.period.end) + '.';
+
+    var prevCur = chartCtx ? chartCtx.cur : null;
+    chartCtx = { P: P, W: W, m: m, iw: iw, total: total, x: x, actual: actual, last: last, hasProj: hasProj, target: target, cur: null };
+    if (!$('chartTip').hidden && prevCur !== null) showTip(prevCur);
+  }
+
+  function showTip(d) {
+    var c = chartCtx;
+    if (!c) return;
+    d = Math.max(0, Math.min(c.total, d));
+    c.cur = d;
+    var xh = document.getElementById('xhair');
+    if (xh) { xh.setAttribute('x1', c.x(d).toFixed(1)); xh.setAttribute('x2', c.x(d).toFixed(1)); xh.setAttribute('visibility', 'visible'); }
+    var date = d === 0 ? PM.fmtDate(c.P.period.start) + ', period starts' : PM.fmtDate(PM.addDays(c.P.period.start, d - 1));
+    var rows = [];
+    if (d <= c.last.d) {
+      var v = 0;
+      c.actual.forEach(function (p) { if (p.d <= d) v = p.v; });
+      rows.push(['var(--accent)', 'solid', fmt(v), 'Your points']);
+    } else if (c.hasProj) {
+      rows.push(['var(--accent)', 'dashed', fmt(c.last.v + c.P.pacePerDay * (d - c.last.d)), 'Projected']);
+    }
+    rows.push(['var(--muted)', 'dotted', fmt(c.target * d / c.total), 'Even pace']);
+
+    var tip = $('chartTip');
+    tip.textContent = '';
+    var head = document.createElement('div');
+    head.className = 'tip-date';
+    head.textContent = date;
+    tip.appendChild(head);
+    rows.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'tip-row';
+      var key = document.createElement('i');
+      key.className = 'lk';
+      key.style.borderTopColor = r[0];
+      key.style.borderTopStyle = r[1];
+      var b = document.createElement('b');
+      b.textContent = r[2];
+      var s = document.createElement('span');
+      s.textContent = r[3];
+      row.appendChild(key); row.appendChild(b); row.appendChild(s);
+      tip.appendChild(row);
+    });
+    tip.hidden = false;
+    var svg = $('chartSvg');
+    var scale = svg.getBoundingClientRect().width / c.W;
+    var px = c.x(d) * scale;
+    var tw = tip.offsetWidth;
+    var hostW = $('chart').clientWidth;
+    var left = px + 14;
+    if (left + tw > hostW) left = px - tw - 14;
+    tip.style.left = Math.max(0, left) + 'px';
+  }
+  function hideTip() {
+    $('chartTip').hidden = true;
+    var xh = document.getElementById('xhair');
+    if (xh) xh.setAttribute('visibility', 'hidden');
+    if (chartCtx) chartCtx.cur = null;
+  }
+  (function bindChart() {
+    var svg = $('chartSvg');
+    svg.addEventListener('pointermove', function (e) {
+      if (!chartCtx) return;
+      var r = svg.getBoundingClientRect();
+      var px = (e.clientX - r.left) * (chartCtx.W / r.width);
+      showTip(Math.round((px - chartCtx.m.l) / chartCtx.iw * chartCtx.total));
+    });
+    svg.addEventListener('pointerleave', hideTip);
+    svg.addEventListener('focus', function () { if (chartCtx) showTip(chartCtx.last.d); });
+    svg.addEventListener('blur', hideTip);
+    svg.addEventListener('keydown', function (e) {
+      if (!chartCtx) return;
+      var cur = chartCtx.cur === null ? chartCtx.last.d : chartCtx.cur;
+      if (e.key === 'ArrowLeft') { showTip(cur - 1); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { showTip(cur + 1); e.preventDefault(); }
+      else if (e.key === 'Escape') hideTip();
+    });
+  })();
+
+  var resizeRaf = 0;
+  if (typeof ResizeObserver === 'function') {
+    var lastW = 0;
+    new ResizeObserver(function () {
+      var w = $('chart').clientWidth;
+      if (w === lastW || !lastPlan || $('chartCard').hidden) return;
+      lastW = w;
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(function () { renderChart(lastPlan); });
+    }).observe($('chart'));
+  }
+
+  // Pick up a new day (and a new period) when the driver comes back to the page.
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) render(); });
+
+  render();
+  initStorage();
+})();
+</script>
